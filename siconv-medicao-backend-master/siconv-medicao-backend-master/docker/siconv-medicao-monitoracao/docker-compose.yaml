@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  grafana:
+    image: grafana/grafana:8.3.2
+    network_mode: host
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/provisioning/provision-dashboard.yaml:/etc/grafana/provisioning/dashboards/provision-dashboard.yaml
+      - ./grafana/provisioning/provision-datasource.yaml:/etc/grafana/provisioning/datasources/provision-datasource.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+       GF_AUTH_ANONYMOUS_ENABLED: 'true'
+       GF_ORG_NAME: '1'
+       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: '/var/lib/grafana/dashboards/dashboard-modulo_medicao_quarkus.json'
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    network_mode: host
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'

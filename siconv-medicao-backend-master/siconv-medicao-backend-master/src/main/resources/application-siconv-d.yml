@@ -1,0 +1,15 @@
+######################################################################
+# Profile para o ambiente de desenvolvimento do estaleiro (siconv-d) #
+######################################################################
+
+quarkus:
+  log:
+    category:
+      br.gov:
+        level: DEBUG
+  smallrye-openapi:
+    enable: true
+
+medicao:
+  rest:
+    showErrorStackTrace: true

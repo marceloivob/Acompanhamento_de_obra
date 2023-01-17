@@ -1,0 +1,91 @@
+<div *ngIf="data && data.length > 0">
+
+  <h3 class="subfieldset">Submetas - Medições Acumuladas</h3>
+
+  <siconv-table
+    [data]="data"
+    [fileExportName]="fileExportName"
+    [pagination]="false"
+    [export]="export">
+
+    <thead header>
+      <tr>
+        <th class="coluna-sem-borda" scope="col"></th>
+        <th class="coluna-sem-borda" scope="col"></th>
+        <th class="coluna-sem-borda" scope="col"></th>
+        <th class="coluna-sem-borda" scope="col"></th>
+        <th class="coluna-sem-borda" colspan="2" scope="col">Empresa</th>
+        <th class="coluna-sem-borda" colspan="2" scope="col">Convenente</th>
+        <th class="coluna-sem-borda" colspan="2" scope="col" >Concedente /<br>Mandatária</th>
+         <th class="coluna-sem-borda" scope="col"></th>
+        <th class="coluna-sem-borda" scope="col"></th>
+      </tr>
+      <tr>
+        <th scope="col" colspan="2" style="width: 34%;">Descrição</th>
+        <th scope="col">Valor (R$)</th>
+        <th scope="col">Realizado</th>
+        <th scope="col">R$</th>
+        <th scope="col">%</th>
+        <th scope="col">R$</th>
+        <th scope="col">%</th>
+        <th scope="col">R$</th>
+        <th scope="col">%</th>
+        <th scope="col" colspan="2">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let medicaoAgrupada of medicoesAgrupadas, let indice = index">
+        <tr [class]="rowToggle.show ? 'trServicos-pai' : ''">
+          <td style="width: 1%;">
+            <siconv-toggle [show]=true [source]="medicaoAgrupada" #rowToggle></siconv-toggle>
+          </td>
+          <td style="width: 99%; padding-left:0px;" (click)="expandCollapseClickOutsideIcon(medicaoAgrupada)" colspan="11">
+            Medição {{medicaoAgrupada.sequencial}}: {{medicaoAgrupada.dataInicio | date : 'dd/MM/yyyy'}} - {{medicaoAgrupada.dataFim | date : 'dd/MM/yyyy'}}
+          </td>
+        </tr>
+
+        <ng-container *ngIf="rowToggle.show">
+          <ng-container *ngFor="let submeta of medicaoAgrupada.listaSubmetasPreenchidas; index as i;">
+
+            <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'" >
+              <td colspan="2" rowspan="2">
+                <i tooltip="Assinada" *ngIf="isEdit() && ( (canAccess('editar_submeta_empresa') && submeta.situacaoEmpresa && submeta.situacaoEmpresa.codigo === 'ASS') || (canAccess('editar_submeta_convenente') && submeta.situacaoConvenente && submeta.situacaoConvenente.codigo === 'ASS'))" class="fas fa-clipboard-check" style="color:#3E67B1; padding-left: 5px;" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+                {{submeta.descricao}}</td>
+              <td rowspan="2" >{{submeta.valor | currency:'BRL':''}}</td>
+              <td >Período</td>
+              <td >{{submeta.valorRealizadoEmpresa | currency:'BRL':''}}</td>
+              <td >{{submeta.percentualRealizadoEmpresa | number:'1.2-2':'pt'}}</td>
+              <td >{{submeta.valorRealizadoConvenente | currency:'BRL':''}}</td>
+              <td >{{submeta.percentualRealizadoConvenente | number:'1.2-2':'pt'}}</td>
+              <td >{{submeta.valorRealizadoConcedente | currency:'BRL':''}}</td>
+              <td >{{submeta.percentualRealizadoConcedente | number:'1.2-2':'pt'}}</td>
+              <td colspan="2" rowspan="2">
+                  <a title="Detalhar" (click)="prepararDetalhamento(medicaoAgrupada.id, submeta.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                    <i class="fas fa-search md-icone" aria-hidden="true"></i>
+                  </a>
+                  <a title="Editar" *ngIf="canAccess('editar_submeta_empresa') || canAccess('editar_submeta_convenente')" (click)="selecionarSubmeta(medicaoAgrupada.id, submeta.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                    <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                  </a>
+              </td>
+            </tr>
+            <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+              <td>Acumulado</td>
+              <td>{{submeta.valorRealizadoAcumuladoEmpresa | currency:'BRL':''}}</td>
+              <td>{{submeta.percentualRealizadoAcumuladoEmpresa | number:'1.2-2':'pt'}}</td>
+              <td>{{submeta.valorRealizadoAcumuladoConvenente | currency:'BRL':''}}</td>
+              <td>{{submeta.percentualRealizadoAcumuladoConvenente | number:'1.2-2':'pt'}}</td>
+              <td>{{submeta.valorRealizadoAcumuladoConcedente | currency:'BRL':''}}</td>
+              <td>{{submeta.percentualRealizadoAcumuladoConcedente | number:'1.2-2':'pt'}}</td>
+            </tr>
+          </ng-container>
+          <tr *ngIf="medicaoAgrupada.listaSubmetasPreenchidas && medicaoAgrupada.listaSubmetasPreenchidas.length === 0">
+            <td colspan="12">
+              Nenhum registro encontrado.
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+     </tbody>
+  </siconv-table>
+
+</div>

@@ -1,0 +1,95 @@
+<siconv-tab-set class="tab-customizada">
+
+  <siconv-tab name="Responsável Técnico" [active]="aba === 'responsavelTecnico' ? true : false" (activeChange)="abaSelecionada($event,'responsavelTecnico')">
+    <siconv-fieldset fieldsetTitle="Responsável Técnico">
+        <button type="button" class="btn btn-primary btn-fieldset" (click)="incluirRespTecnico()" *ngIf="canAccess('incluir')">Incluir</button>
+
+        <siconv-table
+            [data]="data"
+            [fileExportName]="fileExportName"
+            [export]="export"
+            [pagination]="true"
+            (listaPaginada)="getListaPaginada($event)">
+            <thead header>
+                <tr>
+                    <th sortable-column="cpf" sortable-type="string" scope="col">CPF</th>
+                    <th sortable-column="nome" sortable-type="string" scope="col">Nome</th>
+                    <th sortable-column="atividade" sortable-type="string" scope="col">Atividade</th>
+                    <th sortable-column="tipoContrato" sortable-type="string" scope="col">Tipo</th>
+                    <th sortable-column="creacau" sortable-type="string" scope="col">CREA / CAU</th>
+                    <th sortable-column="dataInclusao" sortable-type="date" scope="col">Data Inclusão</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let rt of lista">
+                    <td>{{ rt.cpf | cpf}}</td>
+                    <td *ngIf="rt.possuiARTAtiva">
+                        <i title="Responsável Técnico com ART ativa" class="fas fa-circle" style="font-size:8px;color:#3c7c44;" aria-hidden="true"></i>&nbsp;{{ rt.nome | titlecase }}
+                    </td>
+                    <td *ngIf="!rt.possuiARTAtiva">
+                        {{ rt.nome | titlecase }}
+                    </td>
+                    <td>{{ rt.atividade | titlecase }}</td>
+                    <td>{{ rt.tipoContrato | titlecase }}</td>
+                    <td>{{ rt.creacau }}</td>
+                    <td>{{ rt.dataInclusao | date : 'dd/MM/yyyy' }}</td>
+
+                    <td class="coluna-alinhada-top" style="width: 100px;">
+                        <a title="Detalhar" (click)="prepararDetalhamento(rt.obterRegistroVinculado(this.contrato.id).obterContratoVinculado(this.contrato.id).id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-search md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Editar" *ngIf="canAccess('editar') && !rt.possuiSubmetaAssinada" (click)="prepararEdicao(rt.obterRegistroVinculado(this.contrato.id).obterContratoVinculado(this.contrato.id).id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Editar" *ngIf="canAccess('editar') && rt.possuiSubmetaAssinada" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i tooltip="{{getMotivoSemPermissaoEdicao()}}" placement="left" class="fas fa-pencil-alt md-icone-inativo" aria-hidden="true"></i>
+                        </a>
+                        <a title="Excluir" *ngIf="canAccess('excluir') && !rt.possuiART && !rt.possuiSubmetaAssinada" (click)="prepararExclusao(modalConfirmacaoExcluir, rt.idMedContratoRT)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-trash-alt md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Excluir" *ngIf="canAccess('excluir') && (rt.possuiART || rt.possuiSubmetaAssinada)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i tooltip="{{getMotivoSemPermissaoExclusao(rt.possuiART, rt.possuiSubmetaAssinada)}}" placement="left" class="fas fa-trash-alt md-icone-inativo" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <p style="font-size: 10px;">
+                            <i class="fas fa-circle" style="font-size:8px;color:#3c7c44;" aria-hidden="true"></i>
+                            &nbsp;Responsável Técnico com ART ativa
+                        </p>
+                    </td>
+                </tr>
+            </tfoot>
+        </siconv-table>
+        <ng-template #modalConfirmacaoExcluir>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Exclusão de Responsável Técnico</h4>
+        </div>
+        <div class="modal-body">
+            <p>O Responsável Técnico será <strong>excluído</strong>. Deseja prosseguir?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarExclusao()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarExclusao()">Sim</button>
+            </div>
+        </div>
+        </ng-template>
+    </siconv-fieldset>
+
+  </siconv-tab>
+
+  <siconv-tab name="ART / RRT" (activeChange)='navegarAbaART()' hint="Anotação / Registro de Responsabilidade Técnica"></siconv-tab>
+  <siconv-tab name="Documentação Complementar" (activeChange)='navegarAbaDocComplementar()'></siconv-tab>
+  <siconv-tab name="Paralisação de Obra" (activeChange)='navegarAbaParalisacao()'></siconv-tab>
+
+</siconv-tab-set>
+
+<footer class="footer-botoes">
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+</footer>

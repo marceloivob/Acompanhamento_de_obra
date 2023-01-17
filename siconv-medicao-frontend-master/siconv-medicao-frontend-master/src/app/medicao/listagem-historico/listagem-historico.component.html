@@ -1,0 +1,50 @@
+<div class="fieldset-aba">
+<siconv-tab-set class="tab-customizada">
+    <siconv-tab name="Medições" (activeChange)='navegarAbaMedicao()'></siconv-tab>
+    <siconv-tab name="Histórico" [active]='true'>
+
+        <siconv-fieldset fieldsetTitle="Histórico das Medições">
+
+            <div *ngIf="data && data.length > 0">
+                <siconv-table
+                 [data]="data"
+                 [fileExportName]="fileExportName"
+                 [pagination]="true"
+                 [export]="export"
+                 (listaPaginada)="getListaPaginada($event)">
+                    <thead header>
+                    <tr>
+                        <th scope="col">Data/Hora</th>
+                        <th scope="col">Perfil</th>
+                        <th scope="col">Responsável</th>
+                        <th scope="col">Medição</th>
+                        <th scope="col">Situação da Medição</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <ng-template ngFor let-historico [ngForOf]="lista" let-i="index">
+                            <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+                                <td style="width: 200px;">{{historico.dataHora | date : 'dd/MM/yyyy HH:mm:ss' }}</td>
+                                <td>{{ (historico.inPerfilResponsavel) ? historico.inPerfilResponsavel.descricao : ''}}</td>
+                                <td>{{historico.nomeResponsavel}}</td>
+                                <td>{{historico.nrSequencial}}</td>
+                                <td>{{historico.inSituacao.descricao}}</td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </siconv-table>
+            </div>
+
+            <div *ngIf="data && data.length === 0">
+            Nenhum registro encontrado.
+            </div>
+
+        </siconv-fieldset>
+    </siconv-tab>
+</siconv-tab-set>
+</div>
+
+<footer class="footer-botoes">
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;"
+        (click)="voltar()">Voltar</button>
+</footer>

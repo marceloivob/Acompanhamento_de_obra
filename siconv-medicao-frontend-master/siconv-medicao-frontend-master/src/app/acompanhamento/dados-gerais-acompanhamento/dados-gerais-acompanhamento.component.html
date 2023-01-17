@@ -1,0 +1,200 @@
+<div *ngIf="acompObra">
+  <div class="conteudo-corpo">
+
+    <app-dados-tipo-instrumento [contrato]="acompObra.tipoInstrumento"></app-dados-tipo-instrumento>
+
+    <siconv-fieldset>
+      <siconv-table [data]="acompObra.contratosLotes" [fileExportName]="fileExportName" [pagination]="true"
+        [export]="export" (listaPaginada)="onPageChange($event)" sort>
+        <thead header>
+           <tr>
+            <th scope="col" class="coluna-sem-borda" style="width: 16%;"></th>
+            <th scope="col" class="coluna-sem-borda" style="width: 16%;"></th>
+            <th scope="col" class="coluna-sem-borda" style="width: 11%;"></th>
+            <th scope="col" class="coluna-sem-borda" style="width: 6%;"></th>
+            <th scope="col" class="coluna-sem-borda" colspan="2" style="width: 15%; padding: 25px; text-align: center;">Empresa</th>
+            <th scope="col" class="coluna-sem-borda" colspan="2" style="width: 15%; padding: 20px; text-align: center;">Convenente</th>
+            <th scope="col" class="coluna-sem-borda" colspan="2" style="width: 15%; padding: 20px; text-align: center;">Concedente /<br>Mandatária</th>
+            <th scope="col" class="coluna-sem-borda" style="width: 6%;"></th>
+          </tr>
+          <tr>
+            <th scope="col" style="width: 16%; padding-left: 10px;">Submeta</th>
+            <th scope="col" style="width: 16%; padding-left: 5px;"></th>
+            <th scope="col" style="width: 11%; text-align: right;">Valor Total R$</th>
+            <th scope="col" style="width: 6%; padding-left: 0px;" >Realizado</th>
+            <th scope="col" style="width: 9%; text-align: center;">R$</th>
+            <th scope="col" style="width: 6%; text-align: center;">%</th>
+            <th scope="col" style="width: 9%; text-align: center;">R$</th>
+            <th scope="col" style="width: 6%; text-align: center;">%</th>
+            <th scope="col" style="width: 9%; text-align: center;">R$</th>
+            <th scope="col" style="width: 6%; text-align: center;">%</th>
+            <th scope="col" style="width: 6%;">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <ng-template ngFor let-contratoLote [ngForOf]="lista" let-i="index">
+             <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'" style="border-bottom-style: solid; border-bottom-color: rgb(170, 163, 163); border-bottom-width: thin;">
+              <td class= "coluna-sem-borda" style="padding: 10px;" sort>
+                <p *ngIf="contratoLote.tipo == 'C'" style="color: #0A6AA6; margin-bottom: 0px;">CTEF &nbsp; <strong>{{contratoLote.numero}}</strong></p>
+                <p *ngIf="contratoLote.tipo == 'L'" style="color: #0A6AA6; margin-bottom: 0px;">Lote &nbsp; <strong>{{contratoLote.numero}}</strong></p>
+              </td>
+              <td colspan="6">
+                <p *ngIf="contratoLote.numeroUltimaMedicao !== null" style="color: #0A6AA6; margin-bottom: 0px;">Medição &nbsp;<strong>{{contratoLote.numeroUltimaMedicao !== null ? contratoLote.numeroUltimaMedicao : ''}}</strong></p>
+              </td>
+              <td class="coluna-sem-borda" style="padding-top: 5px; text-align: right;" colspan="2">
+                <i tooltip="Obra Paralisada" *ngIf="contratoLote.paralisado" class="fas fa-pause-circle fa-2x" style="color:#FF0000;"></i>
+                &nbsp;
+                <label *ngIf="contratoLote.paralisado" style="color: #FF0000; padding-top: 4px;" [tooltip]="'Obra Paralisada'"><strong>Obra Paralisada</strong></label>
+              </td>
+              <td class= "coluna-sem-borda" style="padding-top: 5px; text-align: right;" colspan="2">
+                <img *ngIf="contratoLote.qtdeDiasSemMedicao <= 30 && contratoLote.qtdeDiasSemMedicao > 0 " [tooltip]="'Quantidade de Dias Sem Medição '" src="assets/img/agenda.png" class="img md-icone" alt="diasSemMedicao"
+                style="width: 25px; height: 25px; vertical-align: top;" onmouseover="this.style.cursor='default'">
+                <img *ngIf="contratoLote.qtdeDiasSemMedicao > 30" src="assets/img/agenda-atraso.png" class="img md-icone" alt="diasSemMedicao" [tooltip]="'Quantidade de Dias Sem Medição '"
+                style="width: 25px; height: 25px; vertical-align: top;" onmouseover="this.style.cursor='default'">
+                &nbsp;
+                <label *ngIf="contratoLote.qtdeDiasSemMedicao > 0" style="color: #0A6AA6; padding-top: 4px;" [tooltip]="'Quantidade de Dias Sem Medição '"><strong>{{contratoLote.qtdeDiasSemMedicao}}&nbsp;dias</strong></label>
+              </td>
+             </tr>
+             <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+              <td colspan="10">
+                <table style="width: 100%;" class="tabela-submeta">
+                  <caption style='display: none;'></caption>
+                  <ng-template ngFor let-submetas [ngForOf]="contratoLote.submetas">
+                    <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'" *ngIf="contratoLote.tipo == 'L'">
+                      <td rowspan="2" class="dados-submeta" style="width: 16%;  border: none;">
+                        {{submetas.numero}} - {{submetas.descricao}}
+                      </td>
+                      <td class="dados-submeta" style="width: 16%; border: none;">
+                        <strong>Situação:</strong><br>
+                        {{submetas.situacao}}
+                      </td>
+                      <td rowspan="2" style="width: 11%; border: none; text-align: right; vertical-align: middle;">
+                        {{submetas.valorSubmeta | currency:'BRL':''}}
+                      </td>
+                      <td colspan="7" style="width: 57%; border: none;"></td>
+                    </tr>
+                    <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'" *ngIf="contratoLote.tipo == 'L'">
+                      <td class="dados-submeta" style="width: 16%; border: none;">
+                        <strong>Regime de Execução:</strong><br>
+                        {{submetas.regimeExecucao}}
+                      </td>
+                      <td colspan="7" style="width: 57%; border: none;"></td>
+                    </tr>
+                    <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'" *ngIf="contratoLote.tipo == 'C'">
+                      <td rowspan="2" class="dados-submeta" style="width: 16%;  border: none;">
+                        {{submetas.numero}} - {{submetas.descricao}}
+                      </td>
+                      <td class="dados-submeta" style="width: 16%; border: none;">
+                        <strong>Situação:</strong><br>
+                        {{submetas.situacao}}
+                      </td>
+                      <td rowspan="2" style="width: 11%; border: none; text-align: right; vertical-align: middle;">
+                        {{submetas.valorSubmeta | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none;">
+                        {{contratoLote.aptoIniciar  ? 'Período' : ''}}
+                      </td>
+                      <td style="width: 9%; border: none; text-align: right;">
+                        {{submetas.valorRealizadoEmpresa | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none; text-align: right;">
+                        {{submetas.percentualRealizadoEmpresa | number:'1.2-2':'pt'}}
+                      </td>
+                      <td style="width: 9%; border: none; text-align: right;">
+                        {{submetas.valorRealizadoConvenente | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none; text-align: right;">
+                        {{submetas.percentualRealizadoConvenente | number:'1.2-2':'pt'}}
+                      </td>
+                      <td style="width: 9%; border: none; text-align: right;">
+                        {{submetas.valorRealizadoConcedente  | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none; text-align: right;">
+                        {{submetas.percentualRealizadoConcedente | number:'1.2-2':'pt'}}
+                      </td>
+                    </tr>
+                    <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'" *ngIf="contratoLote.tipo == 'C'">
+                      <td class="dados-submeta" style="width: 16%; border: none;">
+                        <strong>Regime de Execução:</strong><br>
+                        {{submetas.regimeExecucao}}
+                      </td>
+                      <td style="width: 6%; border: none;">
+                        {{contratoLote.aptoIniciar ? 'Acumulado' : ''}}</td>
+                      <td style="width: 9%; border: none; text-align: right;">
+                        {{submetas.valorRealizadoAcumuladoEmpresa | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none; text-align: right;">
+                        {{submetas.percentualRealizadoAcumuladoEmpresa | number:'1.2-2':'pt'}}
+                      </td>
+                      <td style="width: 9%; border: none; text-align: right;">
+                        {{submetas.valorRealizadoAcumuladoConvenente | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none; text-align: right;">
+                        {{submetas.percentualRealizadoAcumuladoConvenente | number:'1.2-2':'pt'}}
+                      </td>
+                      <td style="width: 9%; border: none; text-align: right;">
+                        {{submetas.valorRealizadoAcumuladoConcedente | currency:'BRL':''}}
+                      </td>
+                      <td style="width: 6%; border: none; text-align: right;">
+                        {{submetas.percentualRealizadoAcumuladoConcedente | number:'1.2-2':'pt'}}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </table>
+              </td>
+              <td>
+                <img *ngIf="permiteConfiguracao(contratoLote)" data-placement="left" [tooltip]="getHintConfiguracao(contratoLote)" src="assets/img/AtualizarDadosContraoIcon.svg" class="img md-icone" alt="logo"
+                      style="width: 25px; height: 25px;" (click)="exibirConfiguracaoCtef(contratoLote.id)">
+                <img *ngIf="!permiteConfiguracao(contratoLote)" data-placement="left" [tooltip]="getHintConfiguracao(contratoLote)" src="assets/img/AtualizarDadosContraoIconPB.svg" class="img md-icone" alt="logo"
+                      style="width: 25px; height: 25px;" >
+
+
+                <i *ngIf="permiteAcompanhamentoMedicao(contratoLote)" data-placement="left" [tooltip]="getHintAcompanhamentoMedicao(contratoLote)"
+                  class="fas fa-tasks md-icone" style="font-size:18px;color:#3E67B1; padding-left: 5px;" aria-hidden="true" (click)="exibirListagemMedicoes(contratoLote.id)"></i>
+                <i *ngIf="!permiteAcompanhamentoMedicao(contratoLote)" data-placement="left" [tooltip]="getHintAcompanhamentoMedicao(contratoLote)" class="fas fa-tasks md-icone md-icone-inativo" style="padding-left: 5px;" aria-hidden="true"></i>
+              </td>
+             </tr>
+          </ng-template>
+
+        </tbody>
+        <tfoot footer *ngIf="acompObra.valorTotalSubmetas">
+          <tr>
+            <td colspan="11" style="padding-top: 0px; padding-bottom: 0px;">
+              <table style="width: 100%;" class="tabela-submeta">
+                <caption style='display: none;'></caption>
+                <th scope="col" colspan="2" class="footer-cell-blue_custom" style="width: 32%; border: none; vertical-align: middle;">Total</th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 11%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.valorTotalSubmetas | currency:'BRL':''}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 6%; border: none; text-align: left; vertical-align: middle;" >
+                  Acumulado
+                </th>
+                <th scope="col"class="footer-cell-grey_custom" style="width: 9%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.valorTotalEmpresa | currency:'BRL':''}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 6%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.percentualTotalEmpresa | number:'1.2-2':'pt'}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 9%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.valorTotalConvenente | currency:'BRL':''}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 6%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.percentualTotalConvenente | number:'1.2-2':'pt'}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 9%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.valorTotalConcedente | currency:'BRL':''}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 6%; border: none; text-align: right; vertical-align: middle;">
+                  {{acompObra.percentualTotalConcedente | number:'1.2-2':'pt'}}
+                </th>
+                <th scope="col" class="footer-cell-grey_custom" style="width: 6%; border: none; text-align: right; vertical-align: middle;">
+                </th>
+              </table>
+            </td>
+          </tr>
+        </tfoot>
+      </siconv-table>
+    </siconv-fieldset>
+  </div>
+</div>

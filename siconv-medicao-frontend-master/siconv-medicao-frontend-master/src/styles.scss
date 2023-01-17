@@ -1,0 +1,301 @@
+/* You can add global styles to this file, and also import other style files */
+$color-azul: #0a6aa6;
+$color-branca: #fff;
+$font-family-open-sans-regular: 'OpenSans-Regular';
+
+body {
+  height: 100%;
+  width: 100%;
+  font-family: $font-family-open-sans-regular;
+}
+
+h4 {
+  font-family: OpenSans-Regular, sans-serif;
+  font-size: 21px;
+  color: #0a6aa6;
+  margin-bottom: 20px;
+}
+
+h3 {
+  color: $color-azul;
+}
+
+label.subtitulo {
+  font-family: $font-family-open-sans-regular;
+  font-size: 16px;
+  color: $color-azul;
+  margin-bottom: 10px;
+}
+
+.siconv-header {
+  background-color: white;
+}
+
+.conteudo-titulo {
+  padding: 0px 30px 10px 0px;
+}
+
+.conteudo-corpo {
+  padding: 20px 20px 10px 20px;
+  background-color: #f5f5f7;
+  padding-top: 20px;
+  padding-bottom: 60px;
+  //margin-bottom: 40px;
+  margin-top: 20px;
+  /*background-color: #f5f5f7;*/
+  height: 100%;
+  /*min-height: 100vh;*/
+}
+
+.align-right {
+  color: $color-azul;
+  right: 10px;
+  margin-right: 20px;
+  margin-top: -10px;
+  float: right;
+  // margin-bottom: 15px;
+  font-size: 16px;
+  //@include tracking(25);
+}
+
+.coluna-sem-borda {
+  border: none;
+}
+
+.coluna-texto-center {
+  text-align: center;
+}
+
+.footer-botoes {
+  padding: 10px 20px 20px 20px;
+  background-color: #ececec;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55px;
+}
+
+/* tab */
+.tab-customizada .nav {
+  padding-left: 20px !important;
+}
+
+.tab-customizada .nav-tabs {
+  border-bottom: none !important;
+}
+
+.tab-customizada .tab-content {
+  padding: 0px !important;
+  background: #f5f5f7 !important;
+  min-height: 100px !important;
+}
+
+.sub-fieldset {
+  position: relative;
+  background-color: #fff;
+  padding-left: 0px !important;
+  border-left: 0px !important;
+  margin-top: 35px;
+  margin-bottom: 10px;
+}
+
+.sub-fieldset i {
+  left: 0px !important;
+}
+
+.trServicos {
+  background-color: #dfedf7 !important;
+}
+
+.trServicos-pai {
+  background-color: #dfedf7 !important;
+}
+
+.trServicos-pai td {
+  color: $color-azul !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+.tdRadio {
+  vertical-align: top !important;
+}
+
+.subfieldset {
+  color: $color-azul;
+}
+
+.btn-fieldset {
+  float: right;
+  margin-top: -40px;
+}
+
+.alert-mensagem .description {
+  white-space: pre;
+}
+
+.md-icone {
+  font-size: 18px;
+  color: #3E67B1;
+  cursor: pointer;
+}
+
+.md-icone-inativo {
+  font-size: 18px;
+  color: rgb(155, 155, 155);
+  cursor: pointer;
+}
+
+.md-icone-info {
+  font-size: 18px;
+  color: #3E67B1;
+}
+
+.footer-cell-blue {
+  color: #0a6aa6;
+  background-color: white;
+  border-bottom: 1px solid #77a7c5 !important;
+  border-top: 1px solid #77a7c5 !important;
+  font-size: 14px;
+}
+
+.footer-cell-grey {
+  color: #454546;
+  background-color: white;
+  border-bottom: 1px solid #77a7c5 !important;
+  border-top: 1px solid #77a7c5 !important;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.coluna-sem-borda {
+  border-bottom: none !important;
+}
+
+.coluna-sem-borda-top {
+  border-top: none !important;
+}
+
+.modal-body {
+  padding-right: 30px;
+}
+
+.modal-buttons {
+  padding-right: 0px;
+}
+
+.detalhe-arquivo {
+  padding-top: 6px;
+}
+
+.fieldset>.title:hover,
+.sub-fieldset>.title:hover {
+  cursor: default !important;
+}
+
+.siconv-fieldset>.fieldset>i~.title:hover,
+.siconv-sub-fieldset>.sub-fieldset>i~.title:hover {
+  cursor: pointer !important;
+}
+
+/* Sobrescrevendo estilos herdados dos componentes para que todos fiquem com a mesma fonte */
+
+.link {
+  font-family: $font-family-open-sans-regular !important;
+}
+
+.ng-option {
+  font-family: $font-family-open-sans-regular !important;
+}
+
+.obrigatorio {
+  font-family: $font-family-open-sans-regular;
+}
+
+.description {
+  font-family: $font-family-open-sans-regular;
+  font-size: 10px;
+}
+
+.tooltip-inner {
+  font-family: $font-family-open-sans-regular;
+}
+
+.popover-header {
+  font-family: $font-family-open-sans-regular;
+}
+
+.popover-body {
+  font-family: $font-family-open-sans-regular;
+}
+
+.form-check-label {
+  font-family: $font-family-open-sans-regular;
+}
+
+.radio-titulo {
+  font-family: $font-family-open-sans-regular;
+}
+
+.radio-subtitulo {
+  font-family: $font-family-open-sans-regular;
+}
+
+.pick-selection {
+  option {
+    font-family: $font-family-open-sans-regular !important;
+  }
+}
+
+.pick-lado {
+  font-family: $font-family-open-sans-regular;
+}
+
+label.remaining-chars {
+  font-family: $font-family-open-sans-regular;
+}
+
+.coluna-alinhada-top {
+  vertical-align: top !important;
+}
+
+.no-padding-right {
+  padding-right: 0% !important;
+}
+
+.no-padding-left {
+  padding-left: 0% !important;
+}
+
+.form-check-input-custom {
+  position: absolute !important;
+  margin-top: .3rem !important;
+}
+
+.preencher-submeta .fieldset {
+  padding-bottom: 0px !important;
+}
+
+.preencher-submeta .sub-fieldset {
+  padding-bottom: 10px !important;
+}
+
+.totalizador-preencher-submeta .sub-fieldset {
+  margin-top: 10px !important;
+}
+
+.modal-memoria-calculo .modal-content {
+  width: 100%;
+}
+
+.modal-memoria-calculo tbody tr:last-child th:last-child .informacao {
+  color: #ff1e00;
+}
+
+a.link-acao-listagem {
+  min-width: 20px;
+  display: inline-block;
+  padding-right: 2px;
+}

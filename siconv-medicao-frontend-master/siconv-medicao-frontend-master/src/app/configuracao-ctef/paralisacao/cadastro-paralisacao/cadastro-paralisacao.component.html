@@ -1,0 +1,178 @@
+<form [formGroup]="form" >
+
+  <siconv-fieldset fieldsetTitle="Paralisação de Obra" [collapsible]="true">
+    <div class="row">
+      <div class="col-sm-4 informacao">
+        <siconv-date-picker
+          #dataInicioComponent
+          label="Data de Início"
+          description="Data no formato dd/mm/aaaa"
+          formControlName="dataInicio"
+          required="true"
+          [siconvMaxDate]="hoje"
+          (dateChange) = "onChangeDataInicio()"
+          [datedisabled]="isDetail()">
+        </siconv-date-picker>
+
+        <siconv-local-messages
+          [control]="dataInicioComponent.ngControl"
+          requiredMessage="Campo de preenchimento obrigatório."
+          maxDateMessage="Campo não deve ser maior que a data atual ({0}).">
+        </siconv-local-messages>
+      </div>
+
+      <div class="col-sm-4 informacao">
+        <siconv-date-picker
+          #dataFimComponent
+          label="Data Fim"
+          description="Data no formato dd/mm/aaaa"
+          formControlName="dataFim"
+          [siconvMaxDate]="hoje"
+          [datedisabled]="isDetail()">
+        </siconv-date-picker>
+
+        <siconv-local-messages
+          [control]="dataFimComponent.ngControl"
+          maxDateMessage="Campo não deve ser maior que a data atual ({0})."
+          minDateMessage="A Data Fim da paralisação deve ser maior que a Data de Início.">
+        </siconv-local-messages>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3 informacao">
+        <siconv-select
+          #responsavelComponent
+          label="Responsável"
+          formControlName="responsavel"
+          [labels]="listaResponsavel | mapAttribute:'descricao'"
+          [values]="listaResponsavel | mapAttribute:'codigo'"
+          required="true">
+        </siconv-select>
+
+        <siconv-local-messages
+          [control]="responsavelComponent.ngControl"
+          requiredMessage="Campo de preenchimento obrigatório.">
+        </siconv-local-messages>
+      </div>
+
+      <div class="col-sm-6 informacao">
+        <siconv-select
+          #indicativoComponent
+          label="Indicativo"
+          formControlName="indicativo"
+          [labels]="listaIndicativo | mapAttribute:'descricao'"
+          [values]="listaIndicativo | mapAttribute:'codigo'"
+          required="true">
+        </siconv-select>
+
+        <siconv-local-messages
+          [control]="indicativoComponent.ngControl"
+          requiredMessage="Campo de preenchimento obrigatório.">
+        </siconv-local-messages>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-9 informacao">
+        <siconv-select
+          #motivoComponent
+          label="Motivo"
+          formControlName="motivo"
+          [labels]="listaMotivo | mapAttribute:'descricao'"
+          [values]="listaMotivo | mapAttribute:'codigo'"
+          required="true">
+        </siconv-select>
+
+        <siconv-local-messages
+          [control]="motivoComponent.ngControl"
+          requiredMessage="Campo de preenchimento obrigatório.">
+        </siconv-local-messages>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 informacao">
+        <siconv-textarea
+          #observacaoComponent
+          label="Observações"
+          formControlName="observacao"
+          rows=5
+          maxlength=1000
+          required="true"
+          [disabled]="isDetail()">
+        </siconv-textarea>
+
+        <siconv-local-messages
+          [control]="observacaoComponent.ngControl"
+          requiredMessage="Campo de preenchimento obrigatório."
+          maxlengthMessage="Texto excedeu a quantidade de caracteres deste campo.">
+        </siconv-local-messages>
+      </div>
+    </div>
+  </siconv-fieldset>
+
+  <siconv-fieldset fieldsetTitle="Anexos" [collapsible]="true">
+
+    <div *ngIf="!isDetail()">
+      <siconv-file
+        #fileComponent
+        label="Arquivo"
+        description="Arquivo a Anexar"
+        (change)="selecionarArquivo($event)"
+        formControlName="arquivo">
+      </siconv-file>
+
+      <siconv-local-messages
+        [control]="fileComponent.ngControl">
+        <div *ngIf="fileComponent.ngControl.hasError('tamanhoArquivoValidator')">
+          Tamanho de arquivo inválido. O valor máximo permitido é 10 MB.
+        </div>
+        <div *ngIf="fileComponent.ngControl.hasError('tipoArquivoValidator')">
+          Extensão de arquivo inválida. Os formatos permitidos são: PDF, XLS, JPG, JPEG, PNG, ODT, ODS, XLSX, DWG, DOC ou DOCX.
+        </div>
+        <div *ngIf="fileComponent.ngControl.hasError('tamanhoNomeArquivoValidator')">
+          Tamanho do nome do arquivo anexado não pode exceder o limite de 100 caracteres.
+        </div>
+      </siconv-local-messages>
+
+      <button class="btn btn-primary" style="float: right;" (click)="adicionarAnexoListagem()">
+        <em class="fas fa-plus"></em> Anexar</button>
+    </div>
+
+    <siconv-table>
+      <thead header>
+        <tr>
+          <th scope="col" style="text-align:left;">Nome do Arquivo</th>
+          <th scope="col" style="text-align:right;">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let anexo of paralisacao.anexos">
+          <td>{{anexo.nmArquivo}}</td>
+          <td style="text-align:right">
+            <a *ngIf="anexo.url" title="Download" [href]="anexo.url" style="padding-right: 5px;">
+              <em class="fas fa-download md-icone"></em>
+            </a>
+            <a *ngIf="!isDetail()" title="Excluir" (click)="excluirAnexoListagem(anexo)">
+              <em class="fas fa-trash-alt md-icone"></em>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </siconv-table>
+  </siconv-fieldset>
+
+</form>
+
+<footer class="footer-botoes">
+  <button type="button"
+    [class]="[isDetail() ? 'btn btn-primary' : 'btn btn-secondary']"
+    style="margin-left: 20px; margin-right: 5px;"
+    (click)="voltar()">Voltar</button>
+
+  <button type="button" *ngIf="!isDetail()"
+    class="btn btn-primary"
+    style="margin-right: 5px;"
+    (click)="salvar()">Salvar</button>
+</footer>

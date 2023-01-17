@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+ postgres:
+  image: postgres:9.6
+  environment:
+   POSTGRES_DB: siconv_mandatarias_desenv
+   POSTGRES_USER: postgres
+   POSTGRES_PASSWORD: postgres
+   PG_VERSION: 9.6
+   PGDATA: /var/lib/postgresql/data/9.6/pgdata
+  volumes:
+    - ./scripts:/docker-entrypoint-initdb.d/
+  ports:
+    - 5432:5432

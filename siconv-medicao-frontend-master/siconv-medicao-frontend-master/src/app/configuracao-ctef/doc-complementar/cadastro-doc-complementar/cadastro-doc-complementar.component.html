@@ -1,0 +1,208 @@
+<form [formGroup]="manterFormGroup">
+  <siconv-fieldset [fieldsetTitle]="tituloFieldset">
+
+      <!-- Tipo de Documento e Tipo de Manifesto Ambiental -->
+      <div class="row">
+          <div class="col-sm-4 informacao" *ngIf="docCompl">
+                <siconv-select
+                      label="Tipo de Documento"
+                      (selectChange)="verificaSelecao($event)"
+                      [siconvHasError]="tipoDocumentoCtrl"
+                      [required]="true"
+                      formControlName="tipoDocumento"
+                      [labels]="listaTipoDocumento | tipoDocumento"
+                      [values]="listaTipoDocumento">
+                </siconv-select>
+                <siconv-local-messages [control]="tipoDocumentoCtrl" requiredMessage="Campo de preenchimento obrigatório."></siconv-local-messages>
+          </div>
+
+          <div class="col-sm-4 informacao" *ngIf = "outros.includes(tipoSelecionado)">
+              <siconv-input
+                label="Descrição"
+                [required]="true"
+                [siconvHasError]="descricaoDocComplCtrl"
+                formControlName="descricaoDocCompl"
+                maxlength=100>
+              </siconv-input>
+              <siconv-local-messages [control]="descricaoDocComplCtrl" requiredMessage="">
+                  <div *ngIf="descricaoDocComplCtrl.hasError('verificaValorCampoValidator')">
+                    Campo de preenchimento obrigatório.
+                  </div>
+              </siconv-local-messages>
+          </div>
+
+          <div class="col-sm-4 informacao" *ngIf = "manifesto.includes(tipoSelecionado)" >
+                <siconv-select
+                      label="Tipo Manifesto Ambiental"
+                      (selectChange)="validaManifesto($event)"
+                      [siconvHasError]="tipoManifestoAmbientalCtrl"
+                      [required]="true"
+                      formControlName="tipoManifestoAmbiental"
+                      [labels]="listaTipoManifestoAmbiental | tipoManifestoAmbiental"
+                      [values]="listaTipoManifestoAmbiental">
+                </siconv-select>
+                <siconv-local-messages [control]="tipoManifestoAmbientalCtrl" requiredMessage="Campo de preenchimento obrigatório."></siconv-local-messages>
+          </div>
+
+          <div class="col-sm-4 informacao" *ngIf = "outrosManifesto.includes(tipoManifestoSelecionado)">
+            <siconv-input
+              label="Descrição"
+              [required]="true"
+              [siconvHasError]="txDescricaoOutrosCtrl"
+              formControlName="txDescricaoOutros"
+              maxlength=200>
+            </siconv-input>
+            <siconv-local-messages [control]="txDescricaoOutrosCtrl" requiredMessage="">
+              <div *ngIf="txDescricaoOutrosCtrl.hasError('verificaValorCampoValidator')">
+                Campo de preenchimento obrigatório.
+              </div>
+            </siconv-local-messages>
+          </div>
+      </div>
+
+      <!-- Número do Documento e Orgão Emissor -->
+      <div class="row"><br>
+        <div class="col-sm-4 informacao" *ngIf = "todos.includes(tipoSelecionado)">
+          <siconv-input
+            label="Número do Documento"
+            [required]="isNrDocumentoObrigatorio"
+            [siconvHasError]="numeroDocComplCtrl"
+            formControlName="numeroDocCompl"
+            maxlength=40>
+          </siconv-input>
+          <siconv-local-messages [control]="numeroDocComplCtrl" requiredMessage="">
+              <div *ngIf="numeroDocComplCtrl.hasError('verificaValorCampoValidator') && isNrDocumentoObrigatorio">
+                          Campo de preenchimento obrigatório.
+              </div>
+          </siconv-local-messages>
+        </div>
+        <div class="col-sm-4 informacao" *ngIf = "todos.includes(tipoSelecionado)" >
+          <siconv-input
+            label="Órgão Emissor"
+            [required]="isOrgaoEmissorObrigatorio"
+            [siconvHasError]="orgaoEmissorDocComplCtrl"
+            formControlName="orgaoEmissorDocCompl"
+            maxlength=100>
+          </siconv-input>
+          <siconv-local-messages [control]="orgaoEmissorDocComplCtrl" requiredMessage="">
+            <div *ngIf="orgaoEmissorDocComplCtrl.hasError('verificaValorCampoValidator') && isOrgaoEmissorObrigatorio">
+                          Campo de preenchimento obrigatório.
+            </div>
+          </siconv-local-messages>
+        </div>
+
+        <div class="col-sm-4 informacao" *ngIf = "outrosManifesto.includes(tipoManifestoSelecionado)">
+          <label class="titulo">Equivalente à Licença de Instalação</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"  formControlName="eqLicencaInstalacao" id="eqLicencaInstalacao" value={{eqLicencaInstalacaoCtrl.value}} (change)="validaEquivLicInst()" >
+          </div>
+        </div>
+      </div>
+
+      <!-- Data de Emissao, Data de Validade e Arquivo-->
+        <div class="row"><br>
+          <div class="col-sm-4 informacao" *ngIf = "todos.includes(tipoSelecionado)">
+              <siconv-date-picker
+                label="Data de Emissão"
+                name="dataEmissao"
+                (dateChange)="verificaDataEmissao()"
+                [siconvHasError]="dtEmissaoDocComplCtrl"
+                [required]="isDtEmissaoObrigatoria"
+                [datedisabled]="isDetails"
+                formControlName="dtEmissaoDocCompl">
+              </siconv-date-picker>
+              <siconv-local-messages [control]="dtEmissaoDocComplCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+                <div *ngIf="dtEmissaoDocComplCtrl.hasError('dataEmissaoDocComplValidator')">
+                    Campo não deve ser maior que a data atual ({{manterFormGroup.value['dtAtual']  | date : 'dd/MM/yyyy'}}).
+                </div>
+                <div *ngIf="dtEmissaoDocComplCtrl.hasError('validaCampoDataDocComplValidator')">
+                    Campo Inválido ! Campo não deve ser maior que a data atual ({{manterFormGroup.value['dtAtual']  | date : 'dd/MM/yyyy'}}).
+                </div>
+                <div *ngIf="dtEmissaoDocComplCtrl.hasError('germanDate')">
+                  Formato de data Inválido.
+                </div>
+              </siconv-local-messages>
+          </div>
+
+          <div class="col-sm-4 informacao" *ngIf = "excetoOutrosOrdem.includes(tipoSelecionado)">
+
+              <siconv-date-picker
+                label="Data de Validade"
+                name="dataValidade"
+                [siconvHasError]="dtValidadeDocComplCtrl"
+                [required]="isValidadeObrigatoria"
+                [datedisabled]="isDetails"
+                formControlName="dtValidadeDocCompl">
+              </siconv-date-picker>
+              <siconv-local-messages [control]="dtValidadeDocComplCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+                <div *ngIf="dtValidadeDocComplCtrl.hasError('dataValidadeDocComplValidator')">
+                    Campo deve ser maior ou igual a Data de Emissão ({{manterFormGroup.value['dtEmissaoDocCompl']  | date : 'dd/MM/yyyy'}}).
+                </div>
+                <div *ngIf="dtValidadeDocComplCtrl.hasError('validaCampoDataDocComplValidator')">
+                    Campo inválido ! Campo deve ser maior ou igual a Data de Emissão ({{manterFormGroup.value['dtEmissaoDocCompl']  | date : 'dd/MM/yyyy'}}).
+                  </div>
+                <div *ngIf="dtValidadeDocComplCtrl.hasError('germanDate')">
+                    Formato de data Inválido.
+                </div>
+              </siconv-local-messages>
+
+          </div>
+
+          <div class="col-sm-2 informacao" *ngIf = "todos.includes(tipoSelecionado) && (emEdicaoDocCompl || isDetails)">
+            <label class="titulo">Arquivo {{ emEdicaoDocCompl ? 'Atual' : '' }}</label>
+            <p class="informacao detalhe-arquivo text-truncate" tooltip="{{ nomeArquivo }}" placement="left">
+              <a *ngIf="docCompl.url" title="Download" [href]="docCompl.url">
+                <em class="fa fa-download md-icone"></em>
+              </a>
+              {{ nomeArquivo }}
+            </p>
+          </div>
+
+          <div class="col-sm-4 informacao" *ngIf = "todos.includes(tipoSelecionado) && !isDetails">
+                  <siconv-file
+                        label="Arquivo"
+                        description="Arquivo a Anexar"
+                        (change)="fileUpload($event)"
+                        formControlName="file"
+                        [siconvHasError]="fileCtrl">
+                  </siconv-file>
+                  <siconv-local-messages [control]="fileCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+                    <div *ngIf="fileCtrl.hasError('tamanhoArquivoValidator')">
+                      Tamanho de arquivo inválido. O valor máximo permitido é 10 MB.
+                    </div>
+                    <div *ngIf="fileCtrl.hasError('tipoArquivoValidator')">
+                      Extensão de arquivo inválida. Os formatos permitidos são: PDF, XLS, JPG, JPEG, PNG, ODT, ODS, XLSX, DWG, DOC ou DOCX.
+                    </div>
+                    <div *ngIf="fileCtrl.hasError('tamanhoNomeArquivoValidator')">
+                      Tamanho do nome do arquivo anexado não pode exceder o limite de 100 caracteres.
+                    </div>
+                  </siconv-local-messages>
+          </div>
+
+        </div>
+
+      <!-- Submetas -->
+      <div class="row"><br></div>
+      <div class="row">
+        <div class="col-sm-12 informacao" *ngIf = "excetoOutrosOrdem.includes(tipoSelecionado)">
+            <label class="titulo">Submetas Associadas</label>
+            <siconv-picklist
+              (changed)="onDadosChanged($event)"
+              [sources]="dadosSource"
+              [targets]="dadosTarget"
+              sourceLabel="Origem"
+              targetLabel="Destino"
+              [disabled]="isDetails">
+            </siconv-picklist>
+            <siconv-local-messages [control]="submetasCtrl" requiredMessage="Campo de preenchimento obrigatório." >
+            </siconv-local-messages>
+        </div>
+      </div>
+  </siconv-fieldset>
+</form>
+
+<footer class="footer-botoes">
+    <button type="button" class="btn btn-secondary" style="margin-left: 20px; margin-right: 5px;" (click)="cancelar()" *ngIf="!isDetails">Voltar</button>
+    <button *ngIf="canAccess('editar') && !isDetails" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="salvar()" >Salvar</button>
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="cancelar()" *ngIf="isDetails">Voltar</button>
+</footer>

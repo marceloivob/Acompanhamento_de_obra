@@ -1,0 +1,291 @@
+<div class="fieldset-aba">
+<siconv-tab-set class="tab-customizada">
+  <siconv-tab name="Medições" [active]='true'>
+  <siconv-fieldset fieldsetTitle="Medições">
+
+  <button *ngIf="canAccess('incluir') && exibeBotaoCriarMedicao" type="button"
+    [style.display]="exibeBotaoCriarMedicao ? 'block' : 'none'" class="btn btn-primary btn-fieldset"
+    (click)="criarMedicao()">Criar Medição</button>
+
+  <div *ngIf="data && data.length > 0">
+    <siconv-table [data]="data" [fileExportName]="fileExportName" [pagination]="true" [export]="export"
+      (listaPaginada)="getListaPaginada($event)">
+      <!-- Cabeçalho  -->
+      <thead header>
+        <tr>
+          <th class="coluna-sem-borda" scope="col"></th>
+          <th class="coluna-sem-borda" scope="col"></th>
+          <th class="coluna-sem-borda" scope="col"></th>
+          <th class="coluna-sem-borda" scope="col"></th>
+          <th class="coluna-sem-borda" colspan="2" scope="col">Empresa</th>
+          <th class="coluna-sem-borda" colspan="2" scope="col">Convenente</th>
+          <th class="coluna-sem-borda" colspan="2" scope="col">Concedente /<br>Mandatária</th>
+          <th class="coluna-sem-borda" scope="col"></th>
+        </tr>
+        <tr>
+          <th sortable-column="sequencial" sortable-type="number" scope="col" colspan="2">Número</th>
+          <th sortable-column="dataInicio" sortable-type="date" scope="col">Período</th>
+          <th scope="col">Realizado</th>
+          <th scope="col">R$</th>
+          <th scope="col">%</th>
+          <th scope="col">R$</th>
+          <th scope="col">%</th>
+          <th scope="col">R$</th>
+          <th scope="col">%</th>
+          <th scope="col">Situação</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Início de Registro Mestre -->
+        <ng-template ngFor let-medicaoListagem [ngForOf]="lista" let-i="index">
+          <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+            <td rowspan="2" style="width: 10px;" >
+              <div *ngIf="medicaoListagem.filhas.length > 0 ">
+                  <siconv-toggle title="Expandir/Contrair" [source]="medicaoListagem" (expanded)="expandeContraiMedicao(i)" show="medicaoListagem.showDetail"></siconv-toggle>
+              </div>
+            </td>
+             <td rowspan="2" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">
+              {{medicaoListagem.medicao.sequencial}}
+            </td>
+            <td rowspan="2" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">
+              <span> {{medicaoListagem.medicao.dataInicio | date : 'dd/MM/yyyy' }} </span>
+              <span *ngIf="medicaoListagem.medicao.dataFim">
+                a
+                {{medicaoListagem.medicao.dataFim | date : 'dd/MM/yyyy' }}
+              </span>
+            </td>
+          <!-- Início do Período do Registro Mestre -->
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">Período</td>
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medicaoListagem.medicao.valorRealizadoEmpresa | currency:'BRL':''}}</td>
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.percentualRealizadoEmpresa | number:'1.2-2':'pt'}}
+            </td>
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.valorRealizadoConvenente | currency:'BRL':''}}</td>
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.percentualRealizadoConvenente | number:'1.2-2':'pt'}}</td>
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.valorRealizadoConcedente | currency:'BRL':''}}</td>
+            <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.percentualRealizadoConcedente | number:'1.2-2':'pt'}}</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)"rowspan="2">{{medicaoListagem.medicao.situacao.descricao}}</td>
+            <td rowspan="2">
+              <a title="Detalhar" (click)="prepararDetalhamento(medicaoListagem.medicao.id)" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-search md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Iniciar Complementação" *ngIf="(canAccess('editarEmpresa') && medicaoListagem.medicao.situacao.codigo==='ECE')" (click)="prepararModalConfirmacaoIniciarComplementacao(modalConfirmacaoIniciarComplementacao, medicaoListagem.medicao.id)" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Iniciar Complementação" placement = "left" class="fa fa-play md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Editar" *ngIf="(canAccess('editarEmpresa') && ((medicaoListagem.medicao.situacao.codigo==='EM' && !medicaoListagem.medicao.bloqueada) || medicaoListagem.medicao.situacao.codigo==='CE')) || (canAccess('editarConvenente') && ((medicaoListagem.medicao.situacao.codigo==='AT' && !medicaoListagem.medicao.bloqueada) || medicaoListagem.medicao.situacao.codigo==='CC')) || (canAccess('editarConcedenteMandataria') && (medicaoListagem.medicao.situacao.codigo==='AC') && acompanhaPropostaDaModalidade())" (click)="prepararEdicao(medicaoListagem.medicao.id, medicaoListagem.medicao.bloqueada)" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Editar" *ngIf="(canAccess('editarEmpresa') && medicaoListagem.medicao.situacao.codigo==='EM' && medicaoListagem.medicao.bloqueada) || (canAccess('editarConvenente') && medicaoListagem.medicao.situacao.codigo==='AT' && medicaoListagem.medicao.bloqueada)" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Medição bloqueada, favor atuar primeiro na medição sob complementação" class="fas fa-pencil-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Excluir" *ngIf="exibirOpcaoExcluir(medicaoListagem.medicao) && medicaoListagem.medicao.permiteExcluir" (click)="prepararExclusao(modalConfirmacaoExcluir, medicaoListagem)" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-trash-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Excluir" *ngIf="exibirOpcaoExcluir(medicaoListagem.medicao) && !medicaoListagem.medicao.permiteExcluir" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Não é possível excluir, pois existe medição posterior" class="fas fa-trash-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar envio" *ngIf="exibirOpcaoCancelarEnvioConvenente(medicaoListagem.medicao) && medicaoListagem.medicao.permiteCancelarEnvio" (click)="prepararCancelamento(modalConfirmacaoCancelamento, medicaoListagem.medicao.id, cancelarEnvioConvenente, 'Envio')" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-undo-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar envio" *ngIf="exibirOpcaoCancelarEnvioConvenente(medicaoListagem.medicao) && !medicaoListagem.medicao.permiteCancelarEnvio" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Só é possível Cancelar Envio da última medição" placement = "left" class="fas fa-undo-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar ateste" *ngIf="exibirOpcaoCancelarAteste(medicaoListagem.medicao) && medicaoListagem.medicao.permiteCancelarEnvio" (click)="prepararCancelamento(modalConfirmacaoCancelamento, medicaoListagem.medicao.id, cancelarAteste, 'Ateste')" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-undo-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar ateste" *ngIf="exibirOpcaoCancelarAteste(medicaoListagem.medicao) && !medicaoListagem.medicao.permiteCancelarEnvio" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Não é possível cancelar ateste pois existe medição posterior atestada ou em ateste" placement = "left" class="fas fa-undo-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar envio para complementação da Empresa" *ngIf="exibirOpcaoCancelarEnvioParaComplementacaoEmpresa(medicaoListagem.medicao) && medicaoListagem.medicao.permiteCancelarEnvioParaComplementacao" (click)="prepararCancelamento(modalConfirmacaoCancelamento, medicaoListagem.medicao.id, cancelarEnvioParaComplementacao, 'Envio para Complementação')" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-undo-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar envio para complementação da Empresa" *ngIf="exibirOpcaoCancelarEnvioParaComplementacaoEmpresa(medicaoListagem.medicao) && !medicaoListagem.medicao.permiteCancelarEnvioParaComplementacao" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Não é possível cancelar envio para complementação da empresa pois existe medição em ateste, em complementação pelo convenente ou enviada para complementação do convenente" placement = "left" class="fas fa-undo-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Iniciar Ateste" *ngIf="canAccess('iniciarAteste') && (medicaoListagem.medicao.situacao.codigo==='EC') && medicaoListagem.medicao.permiteIniciarAteste" style="min-width: 20px; display: inline-block; padding-right: 2px" (click)="prepararModalConfirmacaoIniciarAteste(modalConfirmacaoIniciarAteste, medicaoListagem)">
+                <i tooltip="Iniciar Ateste" placement = "left" class="fa fa-play md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Iniciar Ateste" *ngIf="canAccess('iniciarAteste') && (medicaoListagem.medicao.situacao.codigo==='EC') && !medicaoListagem.medicao.permiteIniciarAteste" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                <i tooltip="Não é possível iniciar ateste pois existe medição proveniente do fluxo de complementação, a qual deve ser tratada primeiro." placement = "left" class="fa fa-play md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Iniciar Análise" *ngIf="canAccess('iniciarAnalise') && medicaoListagem.medicao.situacao.codigo==='ATD' && acompanhaPropostaDaModalidade()" style="min-width: 20px; display: inline-block; padding-right: 2px" (click)="prepararModalConfirmacaoIniciarAnalise(modalConfirmacaoIniciarAnalise, medicaoListagem)">
+                <i tooltip="Iniciar Análise" placement = "left" class="fa fa-play md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Iniciar Complementação" *ngIf="(canAccess('editarConvenente') && medicaoListagem.medicao.situacao.codigo==='ECC')" (click)="prepararModalConfirmacaoIniciarComplementacao(modalConfirmacaoIniciarComplementacao, medicaoListagem.medicao.id)" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Iniciar Complementação" placement = "left" class="fa fa-play md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar envio para complementação do Convenente" *ngIf="exibirOpcaoCancelarEnvioParaComplementacaoConvenente(medicaoListagem.medicao) && medicaoListagem.medicao.permiteCancelarEnvioParaComplementacao" (click)="prepararCancelamento(modalConfirmacaoCancelamento, medicaoListagem.medicao.id, cancelarEnvioParaComplementacao, 'Envio para Complementação')" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-undo-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar envio para complementação do Convenente" *ngIf="exibirOpcaoCancelarEnvioParaComplementacaoConvenente(medicaoListagem.medicao) && !medicaoListagem.medicao.permiteCancelarEnvioParaComplementacao" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Não é possível cancelar envio para complementação do convenente pois existe medição em análise" placement = "left" class="fas fa-undo-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar Aceite" *ngIf="canAccess('cancelarAceite') && medicaoListagem.medicao.situacao.codigo==='ACT' && medicaoListagem.medicao.permiteCancelarAceite" (click)="prepararCancelamento(modalConfirmacaoCancelamento, medicaoListagem.medicao.id, cancelarAceite, 'Aceite')" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i class="fas fa-undo-alt md-icone" aria-hidden="true"></i>
+              </a>
+              <a title="Cancelar Aceite" *ngIf="canAccess('cancelarAceite') && medicaoListagem.medicao.situacao.codigo==='ACT' && !medicaoListagem.medicao.permiteCancelarAceite" style="min-width: 20px; display: inline-block; padding-right: 4px">
+                <i tooltip="Não é possível cancelar aceite pois existe medição posterior aceita, em análise ou em complementação" placement = "left" class="fas fa-undo-alt md-icone-inativo" aria-hidden="true"></i>
+              </a>
+            </td>
+          <!-- Fim do Período do Registro Mestre -->
+          </tr>
+          <!-- Início do Acumulado do Registro Mestre -->
+          <tr [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">Acumulado</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.valorRealizadoAcumuladoEmpresa | currency:'BRL':''}}</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.percentualRealizadoAcumuladoEmpresa | number:'1.2-2':'pt'}}</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.valorRealizadoAcumuladoConvenente | currency:'BRL':''}}</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.percentualRealizadoAcumuladoConvenente | number:'1.2-2':'pt'}}</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.valorRealizadoAcumuladoConcedente | currency:'BRL':''}}</td>
+            <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medicaoListagem.medicao.percentualRealizadoAcumuladoConcedente | number:'1.2-2':'pt'}}</td>
+          </tr>
+          <!-- Fim do Acumulado do Registro Mestre -->
+          <!-- Início do Registro Detalhe -->
+          <ng-template ngFor let-medListagem [ngForOf]="medicaoListagem.filhas" let-iFilhas="index">
+            <tr *ngIf="medicaoListagem.showDetail" [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+              <td rowspan="2" style="width: 10px;" (click)="expandCollapseClickOutsideIcon(medicaoListagem)"></td>
+              <td align="center" rowspan="2" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">
+                {{medListagem.medicao.sequencial}}
+              </td>
+              <td rowspan="2" (click)="expandCollapseClickOutsideIcon(medicaoListagem)">
+                <span> {{medListagem.medicao.dataInicio | date : 'dd/MM/yyyy' }} </span>
+                <span *ngIf="medListagem.medicao.dataFim">
+                  a
+                  {{medListagem.medicao.dataFim | date : 'dd/MM/yyyy' }}
+                </span>
+              </td>
+              <!-- Início do Período do Registro Detalhe -->
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">Período</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medListagem.medicao.valorRealizadoEmpresa | currency:'BRL':''}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medListagem.medicao.percentualRealizadoEmpresa | number:'1.2-2':'pt'}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medListagem.medicao.valorRealizadoConvenente | currency:'BRL':''}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medListagem.medicao.percentualRealizadoConvenente | number:'1.2-2':'pt'}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medListagem.medicao.valorRealizadoConcedente | currency:'BRL':''}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)">{{medListagem.medicao.percentualRealizadoConcedente | number:'1.2-2':'pt'}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" rowspan="2">{{medListagem.medicao.situacao.descricao}}</td>
+              <td rowspan="2">
+                <a title="Detalhar" (click)="prepararDetalhamento(medListagem.medicao.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                    <i class="fas fa-search md-icone" aria-hidden="true"></i>
+                </a>
+              </td>
+              <!-- Fim do Período do Registro Detalhe -->
+            </tr>
+            <!-- Início do Acumulado do Registro Detalhe -->
+            <tr *ngIf="medicaoListagem.showDetail" [style.background-color]="i % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >Acumulado</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medListagem.medicao.valorRealizadoAcumuladoEmpresa | currency:'BRL':''}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medListagem.medicao.percentualRealizadoAcumuladoEmpresa | number:'1.2-2':'pt' }}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medListagem.medicao.valorRealizadoAcumuladoConvenente | currency:'BRL':''}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medListagem.medicao.percentualRealizadoAcumuladoConvenente | number:'1.2-2':'pt' }}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medListagem.medicao.valorRealizadoAcumuladoConcedente | currency:'BRL':''}}</td>
+              <td (click)="expandCollapseClickOutsideIcon(medicaoListagem)" >{{medListagem.medicao.percentualRealizadoAcumuladoConcedente | number:'1.2-2':'pt' }}</td>
+            </tr>
+            <!-- Fim do Acumulado do Registro Detalhe -->
+          </ng-template>
+          <!-- Fim do Registro Detalhe -->
+        </ng-template>
+        <!-- Fim do Registro Mestre -->
+
+      </tbody>
+    </siconv-table>
+  </div>
+
+  <div *ngIf="data && data.length === 0">
+    Nenhum registro encontrado.
+  </div>
+
+  <ng-template #modalConfirmacaoIniciarAteste>
+    <div class="close">
+        <a class="fa fa-times" (click)="modalConfirmacaoIniciarAtesteRef.hide()"></a>
+    </div>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Iniciar Ateste</h4>
+    </div>
+    <div class="modal-body">
+        <p> {{msgMedicaoIniciarAteste}} </p>
+        <div class="modal-buttons">
+        <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarEnviarAteste()">Não</button>
+        <button type="button" class="btn btn-primary" (click)="iniciarAteste()">Sim</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalConfirmacaoIniciarAnalise>
+  <div class="close">
+      <a class="fa fa-times" (click)="modalConfirmacaoIniciarAnaliseRef.hide()"></a>
+  </div>
+  <div class="modal-header">
+      <h4 class="modal-title pull-left">Iniciar Análise</h4>
+  </div>
+  <div class="modal-body">
+      <p> {{msgMedicaoIniciarAnalise}} </p>
+      <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarIniciarAnalise()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="iniciarAnalise()">Sim</button>
+      </div>
+  </div>
+</ng-template>
+
+<ng-template #modalConfirmacaoIniciarComplementacao>
+  <div class="close">
+      <a class="fa fa-times" (click)="modalConfirmacaoIniciarComplementacaoRef.hide()"></a>
+  </div>
+  <div class="modal-header">
+      <h4 class="modal-title pull-left">Iniciar Complementação</h4>
+  </div>
+  <div class="modal-body">
+      <p> {{msgMedicaoIniciarComplementacao}} </p>
+      <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarIniciarComplementacao()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="iniciarComplementacao()">Sim</button>
+      </div>
+  </div>
+</ng-template>
+
+  <ng-template #modalConfirmacaoExcluir>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Exclusão da Medição</h4>
+        </div>
+        <div class="modal-body">
+            <p>A medição está <strong>{{sitMedicaoExcluir}}</strong>{{exclusaoAgrupada ? ' e se trata de uma medição agrupada' : ''}}.
+               Ao prosseguir, todos os dados da {{exclusaoAgrupada ? 'medição agrupada e suas filhas' : 'Medição'}} serão <strong>excluídos</strong>.
+               Confirma exclusão?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarExclusao()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarExclusao()">Sim</button>
+            </div>
+        </div>
+  </ng-template>
+
+  <ng-template #modalConfirmacaoCancelamento>
+    <div class="close">
+        <a class="fa fa-times" (click)="modalConfirmacaoCancelamentoRef.hide()"></a>
+    </div>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Cancelamento do {{nomeAcaoCancelamento}} da Medição</h4>
+    </div>
+    <div class="modal-body">
+        <p>O {{nomeAcaoCancelamento}} da medição será <strong>cancelado</strong>. Deseja prosseguir?</p>
+        <div class="modal-buttons">
+        <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarAcaoCancelamento()">Não</button>
+        <button type="button" class="btn btn-primary" (click)="confirmarAcaoCancelamento()">Sim</button>
+        </div>
+    </div>
+  </ng-template>
+
+  </siconv-fieldset>
+  </siconv-tab>
+
+  <!-- Historico deverá ser exibido mesmo que ainda nao exista medicao cadastrada. -->
+  <siconv-tab name="Histórico"  (activeChange)='navegarAbaHistorico()'></siconv-tab>
+
+</siconv-tab-set>
+</div>
+
+<footer class="footer-botoes">
+  <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;"
+    (click)="voltar()">Voltar</button>
+</footer>

@@ -1,0 +1,16 @@
+.coluna-com-borda-inferior {
+    border: none;
+}
+
+.coluna-com-borda-inferior > div {
+    border-bottom: 1px solid #0a6aa6; 
+    padding-bottom: 0.45em;
+}
+
+.coluna-texto-truncado {
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    /* autoprefixer: off */
+}

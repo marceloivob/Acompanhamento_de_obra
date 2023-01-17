@@ -1,0 +1,86 @@
+############################################################
+# Profile para o ambiente do desenvolvedor (maquina local) #
+############################################################
+
+quarkus:
+  datasource:
+    username: usr_siconv_p
+    password: usr_siconv_p
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/siconv_mandatarias_desenv
+      #url: jdbc:postgresql://10.31.0.134:5432/dbdes_mandatarias_desenv
+      max-size: 1
+  log:
+    category:
+      br.gov:
+        level: DEBUG
+  smallrye-openapi:
+    enable: true
+  s3:
+    aws:
+      credentials:
+        static-provider:
+          access-key-id: 1fc2ef7936ee4a75b86fa7be71fe9b00
+          secret-access-key: 46e2036c6a8d417d96f622502dea8dd3
+
+sentry:
+  ~: false
+  dsn: ''
+  environment: ''
+
+medicao:
+  rest:
+    showErrorStackTrace: true
+
+integrations:
+  PUBLIC:
+    IDP:
+      endpoint: https://10.139.67.54:8443/idp
+    SICONV:
+      endpoint: https://10.139.67.53:8443/voluntarias
+
+publickey:
+  jwt:
+    idp: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoIVolQydZAWYFnRwluqCNx8mkJ4g+XJmDWFnYwT6uX8PpUd3GGET9orNWQPDyX8iO32pasAWK2JjLFr2jm0+zjhvgTywGbHv5s/io7XeGtn5RrK9o5pdD4OFccvQKElmyQIROFNscNl2Ov53JN6J8aSGCBFWpFuM21jNV/bxx24zAM6AKJGtjQcRwgMiV/FWEzCBDybQ68LzqCDXaxbdPukUnEb5k/N5S9SQqkG+5FMPKwVvpaOXIyA3qyL5ipyNYX8KFa3ZKsPTyYmDqN3296g5unffd8f+r2r4AdrtazkTXlzoHLOh/v2GORw8N73DvFtqjYKWX3bHP/wDPXSTwQIDAQAB
+
+maisbrasil:
+  cadastro:
+    grpc:
+      url: tes-maisbrasil-ep-servico-grpc-siconv.estaleiro.serpro.gov.br
+      port: 80
+  autoriza:
+    jwt:
+      secret:
+        base64: YWQ4NTliMjI1NGE0YWQzOWQxMmQyNjJlZTg3ZGUzMmIyYzE0ZDcwY2JlNDYxMGJjNDk5NzFiNWZkMzQ1OWY0MGIzYTJhZmU1OTU3MjRkNzUyZTdhYjIwNzM0NzRkNWQ5MDI1MjkxMDRiMGMwOWFlYWY1NGFkYjk0N2E5NWRhNDU=
+      token-validity-in-seconds: 600
+    govbr:
+      url-provider: https://sso.staging.acesso.gov.br
+      url-servicos: https://api.staging.acesso.gov.br
+      client-id: tes-siconv.estaleiro.serpro.gov.br/maisbrasil-portal-frontend
+      client-secret: ALm7pQs2GSM-CNHkJghMBtrcGnrBsq8YfezP-nvQqhCXzjOkRq4r8xaYQ6JcBzKanKU4ZY2QjtvsJxdI9fgtKXQ
+    use-proxy: false
+    proxy:
+      hostname: ''
+      port: ''
+      username: ''
+      password: ''
+
+siconv:
+  grpc:
+    host: nodes.estaleiro.serpro
+    port: 32424
+
+contratos:
+  grpc:
+    host: nodes.estaleiro.serpro
+    port: 30806
+
+vrpl:
+  grpc:
+    host: nodes.estaleiro.serpro
+    port: 32127
+
+projeto_basico:
+  grpc:
+    host: nodes.estaleiro.serpro
+    port: 31033

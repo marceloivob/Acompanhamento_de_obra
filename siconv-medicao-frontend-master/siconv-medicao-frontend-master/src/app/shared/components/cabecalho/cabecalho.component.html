@@ -1,0 +1,26 @@
+
+<div class="header">
+  <div *ngIf="isLoginPlataforma">
+    <siconv-top
+      appName="Portal dos Convênios do Governo Federal"
+      [user]="usuario"
+      [logoRoute]="[]"
+      (logout)="logoutFeedback()"
+      [totalTime]="30"
+      [warningTime]="3"
+      (sessionTime)="sessionTimeFeedback($event)">
+    </siconv-top>
+    <siconv-menu
+      [menu]="menu">
+    </siconv-menu>
+  </div>
+  <div *ngIf="isLoginIDP">
+    <app-siconv-menu-antigo
+      (logout)="logoutFeedback()"
+      [totalTime]="30"
+      [warningTime]="3"
+      (sessionTime)="sessionTimeFeedback($event)"
+    ></app-siconv-menu-antigo>
+  </div>
+  <siconv-breadcrumbs [home]="getHomeUrl()"></siconv-breadcrumbs>
+</div>

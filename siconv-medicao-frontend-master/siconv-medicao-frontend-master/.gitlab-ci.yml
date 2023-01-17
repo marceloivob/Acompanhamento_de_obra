@@ -1,0 +1,237 @@
+variables:
+  # Variaveis do Modelo
+  #VERSION: $CI_BUILD_ID
+  #VERSION: 1.0.0-b$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+  URI_ENDPOINT: https://console.estaleiro.serpro.gov.br
+  # Token obtido para o projeto no Console Estaleiro
+  # Inserir o mesmo como Secret do projeto no GitLab
+  # Variaveis do Projeto (De acordo com o cadastrado no Console Estaleiro http://console.estaleiro.serpro.gov.br)
+  SYSTEM: siconv # Sistema cadastrado no portal
+  MODULE: siconv-medicao-frontend # Módulo criado no portal
+  PLATFORM: frontend:nginx # ${PLATFORM} # Plataforma da aplicação
+  ENVIRONMENT_DESENV: d # Ambiente criado no portal
+  ENVIRONMENT_TESTE: t # Ambiente criado no portal
+  ENVIRONMENT_HOMOLOGACAO: h # Ambiente criado no portal
+  ENVIRONMENT_VALIDACAO: v # Ambiente criado no portal
+  ENVIRONMENT_PRODUCAO: p # Ambiente criado no portal
+  ENVIRONMENT_Y: ${ENV_Y_ID} # Ambiente criado no portal
+  URI_ENV_DESENV: ${URI_ENV_DESENV} # URI para o ambiente configurada no portal
+  GIT_SSL_NO_VERIFY: 1
+
+stages:
+    - Build:Compilação
+#    - Build:Testes Unitários
+    - Build:Análise de Qualidade de Código
+    - Estaleiro:Imagem
+    - Estaleiro:Deploy
+    - Estaleiro:Publicação PRODUCAO
+
+before_script:
+   - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+
+Build:Compilação:
+  tags:
+    - shared
+    - devops
+  before_script:
+    - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - echo $CI_BUILD_ID
+    - echo $VERSION
+    - echo "before_script"
+    - npm config set registry https://nexus.aic.serpro.gov.br/repository/npm-group/
+  image: hub.estaleiro.serpro/pipeline/node:12-alpine
+  #image: siconv-node8-sonnar:latest
+  stage: Build:Compilação
+  script:
+    - echo $VERSION
+    - echo "Compilando..."
+    - rm -f package-lock.json
+    - yarn install
+    - yarn build
+  cache:
+    paths:
+        - ./node_modules
+        - yarn.lock
+  artifacts:
+    paths:
+    - ./*.json
+    - ./*.js
+    - dist/
+    - src/
+    - coverage/lcov.info
+    - tslint.json
+    - reports/
+    - coverage/
+    - conf
+    expire_in: 1 week
+
+#Build:Testes Unitários:
+#   before_script:
+#      - export VERSION=1.0.0-b$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+#      - echo "before_script"
+#      - yarn config set registry https://nexus.aic.serpro.gov.br/repository/npm-group/
+#      - yarn add puppeteer
+#   image: siconv-node8-sonnar:latest
+#   stage: Build:Testes Unitários
+#   script:
+#      - echo "Testes unitários..."
+#      - yarn test
+#      - ls -lha
+#   cache:
+#     paths:
+#        - ./node_modules
+#   artifacts:
+#     paths:
+#     - ./*.json
+#     - ./*.js
+#     - dist/
+#     - src/
+#     - tslint.json
+#     - reports/
+#     - coverage/
+#     expire_in: 1 week
+#   tags:
+#      - siconv
+#      - medicao
+#   variables:
+#      GIT_STRATEGY: none
+#   dependencies:
+#     - Build:Compilação
+#   allow_failure: true
+
+Build:Análise de Qualidade de Código:
+   tags:
+     - shared
+     - devops
+   image: hub.estaleiro.serpro/pipeline/sonar-scanner:node
+   stage: Build:Análise de Qualidade de Código
+   before_script:
+    - ls -lha /
+    - ls -lha dist/siconv-start/
+    # - curl -L -o /tmp/icpbrv2.crt http://lcrspo.serpro.gov.br/ca/ICP-Brasilv2.crt
+    # - keytool -v -import -noprompt -trustcacerts -alias 'acraizbrv2' -file /tmp/icpbrv2.crt -keystore /opt/sonar-scanner-3.0.3.778-linux/jre/lib/security/cacerts -storepass changeit
+    # - keytool -v -import -noprompt -trustcacerts -alias 'acraizbrv2' -file /tmp/icpbrv2.crt -keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -storepass changeit
+    #- yarn add typescript
+   script:
+     - sonar-scanner -Dsonar.host.url=https://sonarqube.aic.serpro -Dsonar.login=bcc835c052079a64d43918e1d28398ed028f4d92 -Dsonar.projectKey=42811.SICONV.MEDICAO.FRONTEND -Dsonar.projectName=0031.42811.SICONV.MEDICAO.FRONTEND -Dsonar.projectVersion=$VERSION -Dsonar.typescript.tslint.configPath=tslint.json -Dsonar.tests=src/app -Dsonar.test.inclusions=**/*.spec.ts -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts -Dsonar.sources=src/ -Dsonar.sourceEncoding=UTF-8 -Dsonar.links.scm=https://gitcorporativo.serpro/siconv-42811/Siconv-Medicao/siconv-medicao-frontend/
+     #- sonar-scanner -Dsonar.host.url=https://sonarqube.aic.serpro -Dsonar.login=5332ce9ae9da34f72e3ca9040608db5b1e9f93c6 -Dsonar.projectKey=42811.SICONV.MEDICAO.FRONTEND -Dsonar.projectName=DARC2.DA411.SICONV.MEDICAO.FRONTEND -Dsonar.projectVersion=$VERSION -Dsonar.testExecutionReportPaths=reports/headlesschrome.73.0.3679.linux.0.0.0.xml -Dsonar.typescript.tslint.configPath=tslint.json -Dsonar.tests=src/app -Dsonar.test.inclusions=**/*.spec.ts -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts -Dsonar.sources=src/ -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info -Dsonar.sourceEncoding=UTF-8
+   cache:
+     paths:
+       - ./node_modules
+       - yarn.lock
+   dependencies:
+     - Build:Compilação
+#     - Build:Testes Unitários
+   allow_failure: true
+
+Estaleiro:Construção da Imagem:
+    tags:
+      - shared
+      - devops
+    image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+    stage: Estaleiro:Imagem
+    before_script:
+      - estaleiro -u
+      - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+      - export PLATFORM=frontend:nginx
+      - echo "Configuração do cliente estaleiro"
+      - estaleiro config token --literal $TOKEN_ESTALEIRO
+      - estaleiro config system siconv
+      - export MODULE=siconv-medicao-frontend
+      - mkdir -p public/htdocs
+      - mv conf/ public/conf
+      - mv dist/siconv-start public/htdocs/medicao
+      - ls -la public
+    script:
+      - estaleiro app build --module $MODULE --platform $PLATFORM --version $VERSION --source public
+    dependencies:
+        - Build:Compilação
+
+Estaleiro:Deploy DESENV:
+    tags:
+      - shared
+      - devops
+    image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+    stage: Estaleiro:Deploy
+    environment:
+        name: desenv
+        url: https://des-siconv.estaleiro.serpro.gov.br/medicao/
+    before_script:
+      - estaleiro -u
+      - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+      - export PLATFORM=frontend:nginx
+      - echo "Configuração do cliente estaleiro"
+      - estaleiro config token --literal $TOKEN_ESTALEIRO
+      - estaleiro config system siconv
+      - export MODULE=siconv-medicao-frontend
+    script:
+      - estaleiro app promote mod --module $MODULE --version $VERSION $ENVIRONMENT_DESENV
+    rules:
+      - if: $CI_COMMIT_BRANCH == "master"
+        when: on_success
+      - when: manual
+
+Estaleiro:Deploy TESTE:
+    tags:
+      - shared
+      - devops
+    image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+    stage: Estaleiro:Deploy
+    environment:
+        name: teste
+        url: https://tes-siconv.estaleiro.serpro.gov.br/medicao/
+    before_script:
+      - estaleiro -u
+      - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+      - export PLATFORM=frontend:nginx
+      - echo "Configuração do cliente estaleiro"
+      - estaleiro config token --literal $TOKEN_ESTALEIRO
+      - estaleiro config system siconv
+      - export MODULE=siconv-medicao-frontend
+    script:
+      - estaleiro app promote mod --module $MODULE --version $VERSION $ENVIRONMENT_TESTE
+    when: manual
+
+Estaleiro:Deploy HOMOLOGACAO:
+    tags:
+      - shared
+      - devops
+    image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+    stage: Estaleiro:Deploy
+    environment:
+        name: homologacao
+        url: https://hom-siconv.estaleiro.serpro.gov.br/medicao/
+    before_script:
+      - estaleiro -u
+      - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+      - export PLATFORM=frontend:nginx
+      - echo "Configuração do cliente estaleiro"
+      - estaleiro config token --literal $TOKEN_ESTALEIRO
+      - estaleiro config system siconv
+      - export MODULE=siconv-medicao-frontend
+    script:
+      - estaleiro app promote mod --module $MODULE --version $VERSION $ENVIRONMENT_HOMOLOGACAO
+    when: manual
+
+Estaleiro:Deploy PROD:
+    tags:
+      - shared
+      - devops
+    image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+    stage: Estaleiro:Publicação PRODUCAO
+    only:
+      - /^hotfix.*/
+    environment:
+        name: producao
+        url: https://prod-siconv.estaleiro.serpro.gov.br/medicao/
+    before_script:
+      - estaleiro -u
+      - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+      - export PLATFORM=frontend:nginx
+      - echo "Configuração do cliente estaleiro"
+      - estaleiro config token --literal $TOKEN_ESTALEIRO
+      - estaleiro config system siconv
+      - export MODULE=siconv-medicao-frontend
+    script:
+      - estaleiro app promote mod --module $MODULE --version $VERSION $ENVIRONMENT_PRODUCAO
+    when: manual

@@ -1,0 +1,113 @@
+<div *ngIf="contrato">
+  <form [formGroup]="manterFormGroup">
+    <siconv-fieldset [fieldsetTitle]="tituloFieldset">
+      <div class="row">
+        <div class="col-sm-4 informacao">
+          <siconv-input label="ART / RRT" required="true" [siconvHasError]="numeroArtRrtCtrl"
+            formControlName="numeroArtRrtCtrl" maxlength=50>
+          </siconv-input>
+          <siconv-local-messages [control]="numeroArtRrtCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          </siconv-local-messages>
+        </div>
+
+        <div class="col-sm-2 informacao">
+          <siconv-date-picker label="Data de Emissão" name="dataEmissao" required="true"
+            [siconvHasError]="dtEmissaoCtrl" [required]="true" formControlName="dtEmissao" [datedisabled]="isDetail">
+          </siconv-date-picker>
+          <siconv-local-messages [control]="dtEmissaoCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+            <div *ngIf="dtEmissaoCtrl.hasError('dataEmissaoArtRrtValidator')">
+              Campo não deve ser maior que a data atual ( {{manterFormGroup.value['dtAtual']  | date : 'dd/MM/yyyy'}}
+              ).
+            </div>
+            <div *ngIf="dtEmissaoCtrl.hasError('germanDate')">
+              Formato de data Inválido.
+            </div>
+          </siconv-local-messages>
+        </div>
+        <div class="col-sm-2 informacao" *ngIf="isDetail && isInativado">
+          <label>Data de Inativação</label>
+          <p class="informacao">{{ art.dataInativacao | date : 'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-2 informacao">
+          <label class="titulo">Tipo ART / RRT</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipoArt" formControlName="tipoArt" id="execucao"
+              value="EXE" (change)="onCheckTipo($event)">
+            <label class="form-check-label" for="execucao">
+              Execução
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipoArt" formControlName="tipoArt" id="fiscalizacao"
+              value="FIS" (change)="onCheckTipo($event)">
+            <label class="form-check-label" for="fiscalizacao">
+              Fiscalização
+            </label>
+          </div>
+        </div>
+
+        <div class="col-sm-4 informacao">
+          <siconv-select label="Responsável Técnico"
+            [siconvHasError]="responsavelCtrl" [required]="true" formControlName="responsavelCtrl" [disabled]="verificaListaVazia()"
+            [labels]="listaResponsavel | nomeRT" [values]="listaResponsavel">
+          </siconv-select>
+          <siconv-local-messages [control]="responsavelCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          </siconv-local-messages>
+        </div>
+
+        <div *ngIf="isDetail || (art && emEdicaoArt)"
+          class="{{ isDetail ? 'col-sm-4 informacao' : 'col-sm-2 informacao' }}">
+          <label class="titulo">Anexo {{ isDetail ? '' : 'Atual' }} </label>
+          <p class="informacao detalhe-arquivo text-truncate" tooltip="{{ isDetail ? art.nmArquivo : nmArquivoAtual }}" placement="left">
+            <a *ngIf="art.url" title="Download" [href]="art.url">
+              <em class="fa fa-download md-icone"></em>
+            </a>
+            {{ isDetail ? art.nmArquivo : nmArquivoAtual }}
+          </p>
+        </div>
+
+        <div class="col-sm-4 informacao" *ngIf="!isDetail">
+          <siconv-file label="Anexo" description="Arquivo a Anexar" (change)="fileUpload($event)"
+            formControlName="file">
+          </siconv-file>
+          <siconv-local-messages [control]="fileCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+            <div *ngIf="fileCtrl.hasError('tamanhoArquivoValidator')">
+              Tamanho de arquivo inválido. O valor máximo permitido é 10 MB.
+            </div>
+            <div *ngIf="fileCtrl.hasError('tipoArquivoValidator')">
+              Extensão de arquivo inválida. Os formatos permitidos são: PDF, XLS, JPG, JPEG, PNG, ODT, ODS, XLSX, DWG,
+              DOC ou DOCX.
+            </div>
+            <div *ngIf="fileCtrl.hasError('tamanhoNomeArquivoValidator')">
+              Tamanho do nome do arquivo anexado não pode exceder o limite de 100 caracteres.
+            </div>
+          </siconv-local-messages>
+        </div>
+      </div>
+
+      <br>
+      <div class="row">
+        <div class="col-sm-12 informacao">
+          <label class="titulo">Submetas Associadas</label>
+          <siconv-picklist (changed)="onDadosChanged($event)" [sources]="dadosSource" [targets]="dadosTarget"
+            sourceLabel="Origem" targetLabel="Destino" [disabled]="isDetail">
+          </siconv-picklist>
+          <siconv-local-messages [control]="submetasCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          </siconv-local-messages>
+        </div>
+      </div>
+
+    </siconv-fieldset>
+  </form>
+
+  <footer class="footer-botoes">
+    <button type="button" class="btn btn-secondary" style="margin-left: 20px; margin-right: 5px;" (click)="cancelar()"
+      *ngIf="!isDetail">Voltar</button>
+    <button type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="salvar()"
+      [disabled]="desabilitarBtnSalvar" *ngIf="canAccess('salvar') && !isDetail">Salvar</button>
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="cancelar()"
+      *ngIf="isDetail">Voltar</button>
+  </footer>
+</div>

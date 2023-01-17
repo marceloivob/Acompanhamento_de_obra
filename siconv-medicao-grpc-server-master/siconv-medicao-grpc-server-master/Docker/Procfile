@@ -1,0 +1,1 @@
+web: java -Xmx256m -XX:NewRatio=2 -XX:SurvivorRatio=20 -XX:+UseGCOverheadLimit -XX:+ExitOnOutOfMemoryError -Djava.net.preferIPv4Stack=true -jar quarkus-app/quarkus-run.jar

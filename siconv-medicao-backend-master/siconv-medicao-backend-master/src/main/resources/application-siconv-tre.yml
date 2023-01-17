@@ -1,0 +1,6 @@
+#######################################################################
+# Profile para o ambiente de treinamento do estaleiro (siconv-tre)    #
+#                                                                     #
+# Obs.: Todas as configuracoes ja estao definidas no application.yml, #
+#       nao sendo necessario nenhum ajuste especifico.                #
+#######################################################################

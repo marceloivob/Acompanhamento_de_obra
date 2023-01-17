@@ -1,0 +1,28 @@
+.coluna-sem-borda {
+  border-bottom: none !important;
+}
+
+.coluna-sem-borda-top {
+  border-top: none !important;
+}
+
+.footer-cell-blue {
+  color: #0a6aa6;
+  background-color: white;
+  border-bottom: 1px solid #77a7c5;
+  border-top: 1px solid #77a7c5;
+  font-size: 14px;
+}
+
+.footer-cell-grey {
+  color: #454546;
+  background-color: white;
+  border-bottom: 1px solid #77a7c5;
+  border-top: 1px solid #77a7c5;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+th {
+  vertical-align: middle !important;
+}

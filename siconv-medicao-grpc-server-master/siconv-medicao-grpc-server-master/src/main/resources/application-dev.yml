@@ -1,0 +1,19 @@
+quarkus:
+  datasource:
+    username: usr_siconv_p
+    password: usr_siconv_p
+    jdbc:
+      #url: jdbc:postgresql://localhost:5432/siconv_mandatarias_desenv
+      url: jdbc:postgresql://10.31.0.134:5432/dbdes_mandatarias_desenv
+      max-size: 1
+  grpc:
+    server: 
+        port: 8001
+  log:
+    category:
+      br.gov:
+        level: DEBUG
+sentry:
+  ~: false
+  dsn: ''
+  environment: ''

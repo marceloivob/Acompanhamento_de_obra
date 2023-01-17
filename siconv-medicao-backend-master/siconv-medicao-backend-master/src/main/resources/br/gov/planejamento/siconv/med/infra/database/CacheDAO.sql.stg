@@ -1,0 +1,7 @@
+definirUsuarioLogado(cpf) ::= <%
+	SET LOCAL med.cpf_usuario TO '<cpf>';
+%>
+
+consultarUsuarioLogado() ::= <%
+	SELECT current_setting('med.cpf_usuario');
+%>

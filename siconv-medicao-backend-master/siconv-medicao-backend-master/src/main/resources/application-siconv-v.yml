@@ -1,0 +1,13 @@
+################################################################
+# Profile para o ambiente de validacao do estaleiro (siconv-v) #
+################################################################
+
+quarkus:
+  log:
+    category:
+      br.gov:
+        level: DEBUG
+
+medicao:
+  rest:
+    showErrorStackTrace: true

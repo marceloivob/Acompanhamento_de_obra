@@ -1,0 +1,13 @@
+{
+  "ListaMenu": [
+  ],
+  "UrlImagemLogo": "#",
+  "UrlLinkLogo": "#",
+  "UrlLinkLogout": "#",
+  "InfoUasg": "",
+  "InfoConvenio": "",
+  "TextoLogout": "Sair do Sistema",
+  "IdentificacaoUsuario": "111.111.111-11",
+  "NomeUsuario": "João alberto da Silva",
+  "IsUsuarioGuest": false
+}

@@ -1,0 +1,228 @@
+<form [formGroup]="formulario" >
+  <siconv-fieldset fieldsetTitle="Responsável Técnico - Trabalho Social">
+
+    <div class="row">
+      <div class="col-md-2 informacao" *ngIf="isInclude()">
+        <siconv-input
+          label="CPF"
+          formControlName="cpf"
+          [siconvHasError]="formulario.get('cpf')"
+          mask="999.999.999-99"
+          siconvValidCpf
+          required="true">
+        </siconv-input>
+        <siconv-local-messages [control]="formulario.get('cpf')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+      </div>
+
+      <div class="col-md-2 informacao">
+        <label>Tipo</label>
+        <div class="form-check">
+          <input
+            formControlName="tipoRT"
+            class="form-check-input"
+            type="radio"
+            value="EXE"
+            [siconvHasError]="formulario.get('tipoRT')"
+            (change)="onChangedTipoRT()">
+          <label class="form-check-label" for="execucao">Execução</label>
+        </div>
+        <div class="form-check">
+          <input
+            formControlName="tipoRT"
+            class="form-check-input"
+            type="radio"
+            value="FIS"
+            [siconvHasError]="formulario.get('tipoRT')"
+            (change)="onChangedTipoRT()">
+          <label class="form-check-label" for="fiscalizacao">Fiscalização</label>
+        </div>
+        <siconv-local-messages [control]="formulario.get('tipoRT')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+      </div>
+    </div>
+
+    <div *ngIf="isInclude()">
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary" (click)="pesquisar(modalConfirmacaoEdicao)">Pesquisar</button>
+        </div>
+      </div>
+      <br/>
+    </div>
+
+    <div *ngIf="rts?.responsavelTecnico?.cpf">
+      <div class="row">
+        <div class="col-md-4 informacao">
+          <siconv-input label="Identificação" formControlName="identificacao">
+          </siconv-input>
+        </div>
+
+        <div *ngIf="isDetail()" class="col-md-2 informacao">
+          <label>Data Inclusão</label>
+          <p class="informacao">{{ rts.dtInclusao | date : 'dd/MM/yyyy' }}</p>
+        </div>
+
+        <div *ngIf="isDetail() && formulario.get('dtInativacao').value" class="col-md-2 informacao">
+          <label>Data Inativação</label>
+          <p class="informacao">{{ rts.dtInativacao | date : 'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 informacao">
+          <siconv-input
+            label="E-mail"
+            formControlName="email"
+            maxlength="100">
+          </siconv-input>
+        </div>
+
+        <div class="col-md-2 informacao">
+          <siconv-input
+            formControlName="telefone"
+            label="Telefone"
+            [siconvHasError]="formulario.get('telefone')"
+            (input)="formatarTelefone('telefone')"
+            required="true"
+            maxlength="15">
+          </siconv-input>
+          <siconv-local-messages [control]="formulario.get('telefone')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 informacao">
+          <siconv-input label="Atividade" formControlName="atividade">
+          </siconv-input>
+        </div>
+
+        <div *ngIf="isDetail() || isEdit()" class="{{ isDetail() ? 'col-md-8 informacao' : 'col-md-2 informacao' }}">
+          <label class="titulo">Currículo {{ isEdit() ? 'Atual' : '' }}</label>
+          <p class="informacao detalhe-arquivo text-truncate" tooltip="{{ isDetail() ? rts.nomeArquivo : nomeArquivoAtual }}" placement="left">
+            <a *ngIf="rts.urlArquivo" title="Download" [href]="rts.urlArquivo">
+              <em class="fa fa-download md-icone"></em>
+            </a>
+            {{ isDetail() ? rts.nomeArquivo : nomeArquivoAtual }}
+          </p>
+        </div>
+
+        <div *ngIf="!isDetail()" class="col-md-4 informacao">
+          <siconv-file
+            label="Currículo"
+            description="Arquivo a Anexar. Tamanho máximo 10MB."
+            (change)="fileUpload($event)"
+            formControlName="curriculo">
+          </siconv-file>
+          <siconv-local-messages [control]="formulario.get('curriculo')" [requiredMessage]="requiredMessage">
+            <div *ngIf="formulario.get('curriculo').hasError('tamanhoArquivoValidator')">
+              Tamanho de arquivo inválido. O valor máximo permitido é 10 MB.
+            </div>
+            <div *ngIf="formulario.get('curriculo').hasError('tipoArquivoValidator')">
+              Extensão de arquivo inválida. Os formatos permitidos são: PDF, XLS, JPG, JPEG, PNG, ODT, ODS, XLSX, DWG, DOC ou DOCX.
+            </div>
+            <div *ngIf="formulario.get('curriculo').hasError('tamanhoNomeArquivoValidator')">
+              Tamanho do nome do arquivo anexado não pode exceder o limite de 100 caracteres.
+            </div>
+          </siconv-local-messages>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 informacao">
+          <siconv-input
+            label="Formação"
+            formControlName="formacao"
+            [siconvHasError]="formulario.get('formacao')"
+            required="true"
+            maxlength="100">
+          </siconv-input>
+          <siconv-local-messages [control]="formulario.get('formacao')" [requiredMessage]="requiredMessage">
+          </siconv-local-messages>
+        </div>
+
+        <div class="col-md-4 informacao">
+          <siconv-input
+            label="Registro Profissional"
+            formControlName="registroProfissional"
+            [siconvHasError]="formulario.get('registroProfissional')"
+            maxlength="100">
+          </siconv-input>
+          <siconv-local-messages [control]="formulario.get('registroProfissional')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+        </div>
+      </div>
+
+      <div *ngIf="formulario.get('tipoRT').value == 'FIS'" class="row">
+        <div class="col-md-4 informacao">
+          <siconv-input
+            label="Órgão do Responsável"
+            formControlName="nomeOrgao"
+            [siconvHasError]="formulario.get('nomeOrgao')"
+            required="true"
+            maxlength="100">
+          </siconv-input>
+          <siconv-local-messages [control]="formulario.get('nomeOrgao')" [requiredMessage]="requiredMessage">
+          </siconv-local-messages>
+        </div>
+
+        <div class="col-md-2 informacao">
+          <siconv-input
+            label="Telefone do Órgão"
+            formControlName="telefoneOrgao"
+            [siconvHasError]="formulario.get('telefoneOrgao')"
+            (input)="formatarTelefone('telefoneOrgao')"
+            required="true"
+            maxlength="15">
+          </siconv-input>
+          <siconv-local-messages [control]="formulario.get('telefoneOrgao')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+        </div>
+
+        <div class="col-md-2 informacao">
+          <siconv-input
+            label="E-mail do Órgão"
+            formControlName="emailOrgao"
+            [siconvHasError]="formulario.get('emailOrgao')"
+            required="true"
+            maxlength="100">
+          </siconv-input>
+          <siconv-local-messages [control]="formulario.get('emailOrgao')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+        </div>
+      </div>
+
+      <br/>
+      <div class="row">
+        <div class="col-md-12 informacao">
+          <label class="titulo">Submetas Associadas</label>
+          <siconv-picklist
+            (changed)="onChangedSubmetas($event)"
+            [sources]="submetasSource"
+            [targets]="submetasTarget"
+            sourceLabel="Origem"
+            targetLabel="Destino"
+            [disabled]="isDetail()">
+          </siconv-picklist>
+          <siconv-local-messages [control]="formulario.get('submetasFormCtrl')" [requiredMessage]="requiredMessage"></siconv-local-messages>
+        </div>
+      </div>
+    </div>
+  </siconv-fieldset>
+</form>
+
+<footer class="footer-botoes">
+  <button type="button" [class]="[isDetail() ? 'btn btn-primary' : 'btn btn-secondary']" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+  <button *ngIf="!isDetail() && canAccess('editar') && !exibirBtnSalvar" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="salvar()">Salvar</button>
+</footer>
+
+<ng-template #modalConfirmacaoEdicao>
+  <div class="close">
+    <a class="fa fa-times" (click)="modalConfirmacaoEdicaoRTS.hide()"></a>
+  </div>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Editar Responsável Técnico</h4>
+  </div>
+  <div class="modal-body">
+    <p>O registro já existe. Deseja prosseguir para a edição do registro?</p>
+    <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="cancelarEdicao()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="confirmarEdicao()">Sim</button>
+    </div>
+  </div>
+</ng-template>

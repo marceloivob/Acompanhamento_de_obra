@@ -1,0 +1,166 @@
+<div *ngIf="contrato && medicao">
+
+  <siconv-tab-set class="tab-customizada">
+    <siconv-tab name="Medição" [active]="true">
+
+      <siconv-fieldset>
+        <div>
+          <app-form-dados-medicao [contrato]="contrato" [medicao]="medicao" ></app-form-dados-medicao>
+        </div>
+        <br>
+        <div *ngIf="medicao && medicao.id && !isInclude()">
+          <app-listagem-submeta [medicao]="medicao" (loadComplete)="onListagemSubmetaLoad($event)"></app-listagem-submeta>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div *ngIf="isEdicaoComplementacaoValorAgrupadoraBM()">
+          <app-listagem-submeta-agrupada [medicao]="medicao"></app-listagem-submeta-agrupada>
+        </div>
+      </siconv-fieldset>
+
+      <footer class="footer-botoes">
+        <button type="button" class="btn {{ this.isDetail() ? 'btn-primary' : 'btn-secondary'}}" style="margin-left: 20px; margin-right: 5px;" (click)='voltar()' >Voltar</button>
+        <button *ngIf="(canAccess('editar') || canAccess('incluir')) && exibeSalvar" type="button" [class]="exibeEnviar ? 'btn btn-secondary' : 'btn btn-primary'" style="margin-right: 5px;" (click)="salvarMedicao()">Salvar Medição</button>
+        <button *ngIf="canAccess('enviar_medicao') && exibeEnviar" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="enviar(modalConfirmacaoEnviar)">Enviar Medição</button>
+        <button *ngIf="canAccess('enviar_medicao') && exibeEnviarComplementacao" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="enviar(modalConfirmacaoEnviarComplementacao)">Enviar Medição</button>
+
+        <button *ngIf="canAccess('salvar_dados_vistoria') && exibeSalvarDadosVistoria" type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="salvarDadosVistoria()">Salvar Medição</button>
+        <button *ngIf="(canAccess('solicitar_complementacao_empresa') || canAccess('solicitar_complementacao_convenente') || canAccess('solicitar_complementacao_convenente_admin')) && exibeSolicitarComplemento" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="solicitarComplementacao(modalConfirmacaoComplementacao)">Solicitar Complementação</button>
+        <button *ngIf="canAccess('atestar_medicao') && exibeAtestar" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="atestar(modalConfirmacaoAtestar)">Atestar Medição</button>
+        <button *ngIf="canAccess('aceitar_medicao') && exibeAceitar" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="aceitar(modalConfirmacaoAceitar)">Aceitar Medição</button>
+      </footer>
+      <ng-template #modalConfirmacaoEnviar>
+        <div class="close">
+          <a class="fa fa-times" (click)="modalConfirmacaoEnviarRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Conclusão da Medição</h4>
+        </div>
+        <div class="modal-body">
+          <p>Deseja confirmar a <strong>conclusão</strong> da medição e envio para fiscalização?</p>
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoEnviarRef.hide()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarEnviar()">Sim</button>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #modalConfirmacaoAtestar>
+        <div class="close">
+          <a class="fa fa-times" (click)="modalConfirmacaoAtestarRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <div *ngIf="medicao.situacao.codigo ==  'AT'" >
+            <h4 class="modal-title pull-left">Atestar Medição</h4>
+        </div>
+        <div *ngIf="medicao.situacao.codigo ==  'CC'" >
+          <h4 class="modal-title pull-left">Enviar Complementação para Concedente</h4>
+        </div>
+        </div>
+        <div class="modal-body">
+
+          <div *ngIf="medicao.situacao.codigo ==  'AT'" >
+              <p>Deseja confirmar o <strong>ateste</strong> da medição?</p>
+          </div>
+          <div *ngIf="medicao.situacao.codigo ==  'CC'" >
+              <p>Deseja confirmar a <strong>conclusão da complementação </strong>da medição e envio para análise do concedente?</p>
+          </div>
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoAtestarRef.hide()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarAtestar()">Sim</button>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #modalConfirmacaoEnviarComplementacao>
+        <div class="close">
+          <a class="fa fa-times" (click)="modalConfirmacaoEnviarComplementacaoRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Enviar Complementação</h4>
+        </div>
+        <div class="modal-body">
+          <p>Deseja confirmar a <strong>conclusão da complementação</strong> da medição e envio para fiscalização?</p>
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoEnviarComplementacaoRef.hide()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarEnviarComplementacao()">Sim</button>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #modalConfirmacaoComplementacao>
+        <div class="close">
+          <a class="fa fa-times" (click)="modalConfirmacaoComplementacaoRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <div *ngIf="canAccess('solicitar_complementacao_empresa')" >
+            <h4 class="modal-title pull-left">Solicitar Complementação para Empresa</h4>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_convenente') || canAccess('solicitar_complementacao_convenente_admin')" >
+            <h4 class="modal-title pull-left">Solicitar Complementação para Convenente</h4>
+           </div>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="canAccess('solicitar_complementacao_empresa') && contrato.inAcompEvento && medicao.situacao.codigo == 'AT' && this.medicao.permiteComplementacaoValor != false" >
+            <p>Deseja solicitar <strong>complementação para Empresa</strong>? Ressalta-se que a marcação dos eventos feitas pelo Convenente serão perdidas, as observações da medição serão mantidas.</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_empresa') && !contrato.inAcompEvento && medicao.situacao.codigo == 'AT' && this.medicao.permiteComplementacaoValor != false" >
+            <p>Deseja solicitar <strong>complementação para Empresa</strong>? Ressalta-se que as medições dos serviços feitas pelo Convenente serão perdidas, as observações da medição serão mantidas.</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_empresa') && medicao.situacao.codigo == 'AT' && this.medicao.permiteComplementacaoValor == false" >
+            <p>Deseja solicitar <strong>complementação para Empresa</strong>?</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_empresa') && contrato.inAcompEvento && medicao.situacao.codigo == 'CC' && this.medicao.permiteComplementacaoValor == true" >
+            <p>Deseja reencaminhar a <strong>solicitação de complementação para Empresa</strong>? Ressalta-se que a marcação dos eventos feitas pelo Convenente serão perdidas, as observações da medição serão mantidas.</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_empresa') && !contrato.inAcompEvento && medicao.situacao.codigo == 'CC' && this.medicao.permiteComplementacaoValor == true" >
+            <p>Deseja reencaminhar a <strong> solicitação de complementação para Empresa</strong>? Ressalta-se que as medições dos serviços feitas pelo Convenente serão perdidas, as observações da medição serão mantidas.</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_empresa') && medicao.situacao.codigo == 'CC' && this.medicao.permiteComplementacaoValor == false" >
+            <p>Deseja reencaminhar a <strong>solicitação de complementação para Empresa</strong>? Nenhuma das informações pertinentes à medição serão perdidas.</p>
+          </div>
+          <div *ngIf=" canAccess('solicitar_complementacao_convenente') && !canAccess('solicitar_complementacao_convenente_admin')" >
+            <p>Deseja solicitar <strong>complementação para Convenente</strong>? Nenhuma informação fornecida para a medição pelo Concedente/Mandatária será perdida.</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_convenente_admin') && contrato.inAcompEvento" >
+            <p>Deseja solicitar <strong>complementação para Convenente</strong>? Ressalta-se que a marcação dos eventos realizada pelo Concedente/Mandatária será perdida, os dados da vistoria e observações da medição serão mantidos.</p>
+          </div>
+          <div *ngIf="canAccess('solicitar_complementacao_convenente_admin') && !contrato.inAcompEvento" >
+            <p>Deseja solicitar <strong>complementação para Convenente</strong>? Ressalta-se que as medições dos serviços feitas pelo Concedente/Mandatária serão perdidas, os dados da vistoria e observações da medição serão mantidos.</p>
+          </div>
+          <div class="modal-buttons">
+            <div *ngIf="canAccess('solicitar_complementacao_empresa')" >
+              <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoComplementacaoRef.hide()">Não</button>
+              <button type="button" class="btn btn-primary" (click)="confirmarSolicitacaoComplementacaoEmpresa()">Sim</button>
+            </div>
+            <div *ngIf="canAccess('solicitar_complementacao_convenente') || canAccess('solicitar_complementacao_convenente_admin')" >
+              <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoComplementacaoRef.hide()">Não</button>
+              <button type="button" class="btn btn-primary" (click)="confirmarSolicitacaoComplementacaoConvenente()">Sim</button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #modalConfirmacaoAceitar>
+        <div class="close">
+          <a class="fa fa-times" (click)="modalConfirmacaoAceitarRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Aceitar Medição</h4>
+        </div>
+        <div class="modal-body">
+          <p>Deseja confirmar o <strong>aceite</strong> da medição?</p>
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoAceitarRef.hide()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarAceitar()">Sim</button>
+          </div>
+        </div>
+      </ng-template>
+
+    </siconv-tab>
+
+    <siconv-tab name="Observações" *ngIf="medicao && medicao.id" (activeChange)='navegarAbaObservacoes()'></siconv-tab>
+
+  </siconv-tab-set>
+</div>

@@ -1,0 +1,251 @@
+variables:
+  VERSION: 1.0.0-b$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+  URI_ENDPOINT: https://console.estaleiro.serpro.gov.br 
+  TOKEN: $TOKEN
+  URI_SMOKE_TEST: https://git.serpro/gscvi/pipeline/raw/master/scripts/smoke-test/smoke_test
+  SYSTEM: siconv # Sistema cadastrado no portal
+  PLATFORM: java:11-debian # Plataforma da aplicação
+  ENVIRONMENT_DESENV: d # Ambiente criado no portal
+  ENVIRONMENT_TESTE: t # Ambiente criado no portal
+  ENVIRONMENT_HOMOLOGACAO: h # Ambiente criado no portal
+  ENVIRONMENT_PRODUCAO: p # Ambiente criado no portal
+  MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2"
+  GIT_SSL_NO_VERIFY: "true"
+
+before_script:
+  - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+  - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+  - export ENVIRONMENT_DESENV=d # Ambiente criado no portal
+  - export ENVIRONMENT_TESTE=t # Ambiente criado no portal
+  - export ENVIRONMENT_HOMOLOGACAO=h # Ambiente criado no portal
+  - export ENVIRONMENT_PRODUCAO=p # Ambiente criado no portal
+  - export PLATFORM=java:11-debian
+
+stages:
+- Build:Compilação
+- Build:Análise de Qualidade de Código
+- Estaleiro:Construção da Imagem
+- Estaleiro:Publicação
+- Estaleiro:Publicação PRODUCAO
+
+Build:Compilação:
+  tags:
+    - shared
+    - devops
+  before_script:
+    - echo $CI_BUILD_ID
+    - echo $VERSION
+    - echo "before_script"
+  image: hub.estaleiro.serpro/pipeline/maven:3-jdk-11-slim
+  stage: Build:Compilação
+  script:
+    - echo "Compilando..."
+    - mvn clean verify
+  artifacts:
+    paths:
+      - target/quarkus-app/
+      - docker/Procfile
+      - src/
+      - target/classes
+      - target/jacoco-ut/
+      - target/site/
+      - target/surefire-reports/
+      - target/jacoco.exec
+      - target/dependency-check-report.xml
+      - target/dependency-check-report.html
+
+Build:Análise de Qualidade de Código:
+  tags:
+    - shared
+    - devops
+  stage: Build:Análise de Qualidade de Código
+  image: hub.estaleiro.serpro/pipeline/maven:3-jdk-11-slim
+  script: 
+    - mvn -Dsonar.host.url=https://sonarqube.aic.serpro -Dsonar.login=bcc835c052079a64d43918e1d28398ed028f4d92 -Dsonar.projectKey=42811.SICONV.MEDICAO.BACKEND -Dsonar.projectName=DARC2.DA411.SICONV.MEDICAO.BACKEND -Dsonar.projectVersion=$VERSION -Dsonar.coverage.exclusions='src/main/java/**/**DTO.java,src/main/java/**/**BD.java,src/main/java/**/**Rest.java,src/main/java/**/**DAO.java,src/main/java/**/**Enum.java,src/main/java/br/gov/planejamento/siconv/med/infra/**' -Dsonar.jacoco.reportPaths=target/jacoco.exec -Dsonar.dependencyCheck.reportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.reportPath=target/dependency-check-report.html -Dsonar.junit.reportPaths=./target/surefire-reports/ -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=src/main/java -Dsonar.java.source=1.11 -Dsonar.java.binaries=target -Dsonar.tests=src/test/java/ -Dsonar.test.inclusions=src/test/java/**/**.java -Dsonar.links.scm=https://gitcorporativo.serpro/siconv-42811/Siconv-Medicao/siconv-medicao-backend/ sonar:sonar
+  allow_failure: true
+  dependencies:
+    - Build:Compilação
+
+Estaleiro:Construção da Imagem:
+   tags:
+    - shared
+    - devops
+   stage: Estaleiro:Construção da Imagem
+   image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+   before_script:
+     - env
+     - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+     - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+     - export ENVIRONMENT_DESENV=d # Ambiente criado no portal
+     - export ENVIRONMENT_TESTE=t # Ambiente criado no portal
+     - export ENVIRONMENT_HOMOLOGACAO=h # Ambiente criado no portal
+     - export ENVIRONMENT_PRODUCAO=p # Ambiente criado no portal
+     - export PLATFORM=java:11-debian
+     - echo $CI_COMMIT_SHA
+     - echo $VERSION
+     - echo "Atualização do cliente Estaleiro"
+     - estaleiro -u
+     - echo "Construção da Imagem no estaleiro"
+     - estaleiro config token --literal $TOKEN
+     - estaleiro config endpoint $URI_ENDPOINT
+     - estaleiro config system siconv
+     - export MODULE=siconv-medicao-backend
+   script:
+     - mv docker/Procfile .
+     - mv target/quarkus-app/ .
+     - rm -rf docker/
+     - rm -rf src/
+     - rm -rf target/
+     - rm -rf .gitignore
+     - rm -rf .gitlab-ci.yml
+     - rm -rf pom.xml
+     - rm -rf .mvn
+     - rm -rf mvnw
+     - rm -rf mvnw.cmd
+     - cat Procfile
+     - find .
+     - echo "estaleiro app build --module $MODULE --platform $PLATFORM --version $VERSION"
+     - estaleiro app build --module $MODULE --platform $PLATFORM --version $VERSION
+   dependencies:
+     - Build:Compilação
+     - Build:Análise de Qualidade de Código
+
+Estaleiro:Publicação DESENV:
+   tags:
+     - shared
+     - devops
+   stage: Estaleiro:Publicação
+   image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+   before_script:
+     - env
+     - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+     - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+     - export ENVIRONMENT_DESENV=d # Ambiente criado no portal
+     - export ENVIRONMENT_TESTE=t # Ambiente criado no portal
+     - export ENVIRONMENT_HOMOLOGACAO=h # Ambiente criado no portal
+     - export ENVIRONMENT_PRODUCAO=p # Ambiente criado no portal
+     - export PLATFORM=java:11-debian
+     - echo $CI_COMMIT_SHA
+     - echo $VERSION
+     - echo "Atualização do cliente Estaleiro"
+     - estaleiro -u
+     - echo "Configuração do cliente estaleiro"
+     - estaleiro config token --literal $TOKEN
+     - estaleiro config endpoint $URI_ENDPOINT
+     - estaleiro config system siconv
+     - export MODULE=siconv-medicao-backend
+   script:
+     - echo "Promoção da Build para o Ambiente de Desenvolvimento"
+     - echo "estaleiro app promote mod $ENVIRONMENT_DESENV --module $MODULE --version $VERSION"
+     - estaleiro app promote mod $ENVIRONMENT_DESENV --module $MODULE --version $VERSION
+   environment:
+     name: desenv
+     url: https://des-siconv.estaleiro.serpro.gov.br/medicao-backend/
+   #when: manual
+   dependencies:
+     - Estaleiro:Construção da Imagem
+
+   
+Estaleiro:Publicação TESTE:
+  tags:
+    - shared
+    - devops
+  stage: Estaleiro:Publicação
+  image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+  before_script:
+    - env
+    - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+    - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - export ENVIRONMENT_DESENV=d # Ambiente criado no portal
+    - export ENVIRONMENT_TESTE=t # Ambiente criado no portal
+    - export ENVIRONMENT_HOMOLOGACAO=h # Ambiente criado no portal
+    - export ENVIRONMENT_PRODUCAO=p # Ambiente criado no portal
+    - export PLATFORM=java:11-debian
+    - echo $CI_COMMIT_SHA
+    - echo $VERSION
+    - echo "Atualização do cliente Estaleiro"
+    - estaleiro -u
+    - echo "Configuração do cliente estaleiro"
+    - estaleiro config token --literal $TOKEN
+    - estaleiro config endpoint $URI_ENDPOINT
+    - estaleiro config system siconv
+    - export MODULE=siconv-medicao-backend
+  script:
+    - echo "Promoção da Build para o Ambiente de Teste"
+    - echo "estaleiro app promote mod $ENVIRONMENT_TESTE --module $MODULE --version $VERSION"
+    - estaleiro app promote mod $ENVIRONMENT_TESTE --module $MODULE --version $VERSION
+  environment:
+    name: teste
+    url: https://tes-siconv.estaleiro.serpro.gov.br/medicao-backend/
+  when: manual
+  dependencies:
+    - Estaleiro:Construção da Imagem
+
+Estaleiro:Publicação HOMOLOGACAO:
+  tags:
+    - shared
+    - devops
+  stage: Estaleiro:Publicação
+  image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+  before_script:
+    - env
+    - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+    - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - export ENVIRONMENT_DESENV=d # Ambiente criado no portal
+    - export ENVIRONMENT_TESTE=t # Ambiente criado no portal
+    - export ENVIRONMENT_HOMOLOGACAO=h # Ambiente criado no portal
+    - export ENVIRONMENT_PRODUCAO=p # Ambiente criado no portal
+    - export PLATFORM=java:11-debian
+    - echo $CI_COMMIT_SHA
+    - echo $VERSION
+    - echo "Atualização do cliente Estaleiro"
+    - estaleiro -u
+    - echo "Configuração do cliente estaleiro"
+    - estaleiro config token --literal $TOKEN
+    - estaleiro config endpoint $URI_ENDPOINT
+    - estaleiro config system siconv
+    - export MODULE=siconv-medicao-backend
+  script:
+    - echo "Promoção da Build para o Ambiente de Homologação"
+    - echo "estaleiro app promote mod $ENVIRONMENT_HOMOLOGACAO --module $MODULE --version $VERSION"
+    - estaleiro app promote mod $ENVIRONMENT_HOMOLOGACAO --module $MODULE --version $VERSION
+  environment:
+    name: homologacao
+    url: https://hom-siconv.estaleiro.serpro.gov.br/medicao-backend/
+  when: manual
+  dependencies:
+    - Estaleiro:Construção da Imagem
+  
+Estaleiro:Publicação PRODUCAO:
+  tags:
+    - shared
+    - devops
+  stage: Estaleiro:Publicação PRODUCAO
+  only:
+    - /^hotfix.*/
+  image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+  before_script:
+    - env
+    - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+    - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - export ENVIRONMENT_PRODUCAO=p # Ambiente criado no portal
+    - export PLATFORM=java:11-debian
+    - echo $CI_COMMIT_SHA
+    - echo $VERSION
+    - echo "Atualização do cliente Estaleiro"
+    - estaleiro -u
+    - echo "Configuração do cliente estaleiro"
+    - estaleiro config token --literal $TOKEN
+    - estaleiro config endpoint $URI_ENDPOINT
+    - estaleiro config system siconv
+    - export MODULE=siconv-medicao-backend
+  script:
+    - echo "Promoção da Build para o Ambiente de Produção"
+    - echo "estaleiro app promote mod $ENVIRONMENT_PRODUCAO --module $MODULE --version $VERSION"
+    - estaleiro app promote mod $ENVIRONMENT_PRODUCAO --module $MODULE --version $VERSION
+  environment:
+    name: producao
+    url: https://pro-siconv.estaleiro.serpro.gov.br/medicao-backend/
+  when: manual
+  dependencies:
+    - Estaleiro:Construção da Imagem

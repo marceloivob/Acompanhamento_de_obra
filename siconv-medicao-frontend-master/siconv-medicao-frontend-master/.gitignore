@@ -1,0 +1,58 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# profiling files
+chrome-profiler-events.json
+speed-measure-plugin.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+src/coverage/Chrome 74.0.3723 (Linux 0.0.0)/sorter.js
+reports/chrome.74.0.3723.linux.0.0.0.xml
+reports/headlesschrome.74.0.3723.linux.0.0.0.xml
+src/coverage/Chrome 74.0.3723 (Linux 0.0.0)/base.css
+src/coverage/Chrome 74.0.3723 (Linux 0.0.0)/index.html
+src/coverage/Chrome 74.0.3723 (Linux 0.0.0)/prettify.css
+src/coverage/Chrome 74.0.3723 (Linux 0.0.0)/prettify.js
+src/coverage/Chrome 74.0.3723 (Linux 0.0.0)/sort-arrow-sprite.png
+src/coverage/HeadlessChrome 74.0.3723 (Linux 0.0.0)/base.css
+src/coverage/HeadlessChrome 74.0.3723 (Linux 0.0.0)/index.html
+src/coverage/HeadlessChrome 74.0.3723 (Linux 0.0.0)/prettify.css
+src/coverage/HeadlessChrome 74.0.3723 (Linux 0.0.0)/prettify.js
+src/coverage/HeadlessChrome 74.0.3723 (Linux 0.0.0)/sort-arrow-sprite.png
+src/coverage/HeadlessChrome 74.0.3723 (Linux 0.0.0)/sorter.js

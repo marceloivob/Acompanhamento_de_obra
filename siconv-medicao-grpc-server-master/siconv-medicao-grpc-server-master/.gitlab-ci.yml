@@ -1,0 +1,171 @@
+variables:
+  URI_ENDPOINT: https://console.estaleiro.serpro.gov.br
+  TOKEN: $TOKEN
+  SYSTEM: siconv # Fornece serviços relativos ao módulo de Medições
+  MODULE: siconv-medicao-grpc-server # Módulo criado no portal
+  PLATFORM: java:11-debian # ${PLATAFORM} # Plataforma da aplicação
+  ENVIRONMENT_DESENV: d # Ambiente criado no portal
+  ENVIRONMENT_TESTE: t # Ambiente criado no portal
+  ENVIRONMENT_HOMOLOGACAO: h # Ambiente criado no portal
+  ENVIRONMENT_PRODUCAO: p # Ambiente criado no portal
+  ENVIRONMENT_TREINAMENTO: tre # Ambiente criado no portal
+  ENVIRONMENT_VALIDACAO: v # Ambiente criado no portal
+  ENVIRONMENT_Y: ${ENV_Y_ID} # Ambiente criado no portal
+  URI_ENV_DESENV: ${URI_ENV_DESENV} # URI para o ambiente configurada no portal
+  MAVEN_OPTS: "-Dmaven.repo.local=/.m2"
+  GIT_SSL_NO_VERIFY: "true"
+
+.config_cli_estaleiro: &config_cli_estaleiro
+  image: hub.estaleiro.serpro/pipeline/cliente-estaleiro:latest
+  before_script:    
+    - export VERSION=$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - estaleiro config token --literal $TOKEN
+    - estaleiro config endpoint $URI_ENDPOINT
+    - estaleiro config system siconv
+
+stages:
+    - Build:Compilação
+    #- Build:Testes Unitários
+    - Build:Análise de Qualidade de Código
+    - Estaleiro:Construção da Imagem
+    - Estaleiro:Deploy
+    - Estaleiro:Publicação PRODUCAO
+
+before_script:
+
+#  - echo "Configuração do Cliente Estaleiro..."
+#  - apt update && apt install --yes python python-dev ca-certificates
+#  - wget mirror.estaleiro.serpro/cli/estaleiro -O /usr/bin/estaleiro && chmod 755 /usr/bin/estaleiro && printf "s\n" | estaleiro
+#   - export VERSION=1.0.0-b$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+
+Build:Compilação:
+  before_script:
+    - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+    - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - echo $CI_BUILD_ID
+    - echo $VERSION
+    - echo "before_script"
+    #- apk --no-cache add ca-certificates wget
+    #- echo "depois do apk1"
+    #- wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+    #- echo "depois do wget1"
+    #- wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/glibc-2.28-r0.apk
+    #- echo "depois do wget2"
+    #- apk add glibc-2.28-r0.apk
+    #- echo "depois do apk2"  
+  #image: hub.estaleiro.serpro/pipeline/maven:3-jdk-8-alpine
+  image: hub.estaleiro.serpro/pipeline/maven:3-jdk-11-slim
+  stage: Build:Compilação
+  script:
+    - echo "Compilando..."
+    - sed -i 's|\*|\*,!raw|' /root/.m2/settings.xml
+    - mvn clean package
+#  cache:
+#    paths:
+#        - /.m2
+  artifacts:
+    paths:
+      - target/quarkus-app/
+      - Docker/Procfile
+      - src/
+      - target/classes
+      - target/jacoco-ut/
+      - target/site/
+      - target/surefire-reports/
+      - target/jacoco.exec
+      - target/dependency-check-report.xml
+      - target/dependency-check-report.html
+    expire_in: 1 week
+
+# Build:Testes Unitários:
+#   before_script:
+#     - export VERSION=1.0.0-b$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+#     - echo "before_script"
+#   image: siconv-node8:latest
+#   stage: Build:Testes Unitários
+#   script:
+#     - echo "Testes unitários..."
+#     - npm run test:ci
+
+#   tags:
+#     - siconv
+#     - cps
+#   variables:
+#     GIT_STRATEGY: none
+
+Build:Análise de Qualidade de Código:
+  tags:
+    - shared
+    - devops
+  stage: Build:Análise de Qualidade de Código
+  image: hub.estaleiro.serpro/pipeline/maven:3-jdk-11-slim
+  script: 
+    - mvn -Dsonar.host.url=https://sonarqube.aic.serpro -Dsonar.login=8612849580038c5450117180cb2fe11ebbc79539 -Dsonar.projectKey=42811.SICONV.MEDICAO.GRPC -Dsonar.projectName=0031.42811.SICONV.MEDICAO.GRPC -Dsonar.projectVersion=$VERSION -Dsonar.coverage.exclusions='src/main/java/**/**DTO.java,src/main/java/**/**BD.java,src/main/java/**/**DAO.java,src/main/java/br/gov/serpro/siconv/med/grpc/infra/**' -Dsonar.jacoco.reportPaths=target/jacoco.exec -Dsonar.dependencyCheck.reportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.reportPath=target/dependency-check-report.html -Dsonar.junit.reportPaths=./target/surefire-reports/ -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=src/main/java -Dsonar.java.source=1.11 -Dsonar.java.binaries=target/ -Dsonar.tests=src/test/java/ -Dsonar.test.inclusions=src/test/java/**/**.java -Dsonar.links.scm=https://gitcorporativo.serpro/siconv-42811/Siconv-Medicao/siconv-medicao-grpc-server/ sonar:sonar
+  allow_failure: true
+  dependencies:
+    - Build:Compilação
+
+
+Estaleiro:Construção da Imagem:
+  stage: Estaleiro:Construção da Imagem
+  image: cliente-estaleiro:latest
+  <<: *config_cli_estaleiro
+  script:
+    - echo $VERSION
+    - echo "Construindo e publicando a imagem para o Estaleiro..."
+    - ls
+    - mv Docker/Procfile .
+    - mv target/quarkus-app/ .
+    - rm -rf Docker/
+    - rm -rf src/
+    - rm -rf target/
+    - estaleiro app build --module $MODULE --platform $PLATFORM --version $VERSION
+  dependencies:
+    - Build:Compilação
+  variables:
+    GIT_STRATEGY: none
+
+Estaleiro:Publicação DESENV:
+  stage: Estaleiro:Deploy
+  image: cliente-estaleiro:latest
+  <<: *config_cli_estaleiro
+  script:
+    - echo "Promoção da Build para o Ambiente de Desenvolvimento"
+    - echo "estaleiro app promote mod $ENVIRONMENT_DESENV --module $MODULE --version $VERSION"
+    - estaleiro app promote mod $ENVIRONMENT_DESENV --module $MODULE --version $VERSION
+  when: manual
+  dependencies:
+    - Build:Compilação
+  variables:
+    GIT_STRATEGY: none
+
+Estaleiro:Publicação HOM:
+ stage: Estaleiro:Deploy
+ image: cliente-estaleiro:latest
+ <<: *config_cli_estaleiro
+ script:
+   - echo "Promoção da Build para o Ambiente de Homologação"
+   - echo "estaleiro app promote mod $ENVIRONMENT_HOMOLOGACAO --module $MODULE --version $VERSION"
+   - estaleiro app promote mod $ENVIRONMENT_HOMOLOGACAO --module $MODULE --version $VERSION
+ when: manual
+ dependencies:
+   - Build:Compilação
+ variables:
+   GIT_STRATEGY: none
+    
+ 
+Estaleiro:Publicação PRODUCAO:
+  stage: Estaleiro:Publicação PRODUCAO
+  only:
+    - /^feature.*/
+  image: cliente-estaleiro:latest
+  <<: *config_cli_estaleiro
+  script:
+    - echo "Promoção da Build para o Ambiente de Produção"
+    - echo "estaleiro app promote mod $ENVIRONMENT_DESENV --module $MODULE --version $VERSION"
+    - estaleiro app promote mod $ENVIRONMENT_PRODUCAO --module $MODULE --version $VERSION
+  when: manual
+  dependencies:
+    - Build:Compilação
+  variables:
+    GIT_STRATEGY: none    

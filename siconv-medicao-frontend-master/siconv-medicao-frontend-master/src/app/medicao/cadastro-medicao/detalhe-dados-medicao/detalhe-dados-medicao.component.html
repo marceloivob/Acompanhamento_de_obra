@@ -1,0 +1,54 @@
+<siconv-fieldset>
+  <div *ngIf="medicao">
+    <h3 class="subfieldset">Medição</h3>
+    <div class="row">
+      <div class="col-sm-4 informacao">
+        <label class="titulo">Data de Início do Objeto</label>
+        <p class="informacao">
+            {{medicao.dataInicioObra | date: 'dd/MM/yyyy'}}
+        </p>
+      </div>
+      <div class="col-sm-8 informacao">
+        <label class="titulo">Situação</label>
+        <p class="informacao">
+            {{medicao.situacao.descricao}}
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4 informacao">
+        <label class="titulo">Data de Início da Medição</label>
+        <p class="informacao">
+            {{medicao.dataInicio | date: 'dd/MM/yyyy'}}
+        </p>
+      </div>
+      <div class="col-sm-4 informacao">
+        <label class="titulo">Data Fim da Medição</label>
+        <p class="informacao">
+            {{medicao.dataFim | date: 'dd/MM/yyyy'}}
+        </p>
+      </div>
+      <div class="col-sm-4 informacao" *ngIf="exibeDadosVistoria">
+        <label class="titulo">Data da Vistoria</label>
+        <p class="informacao">
+            {{medicao.dataVistoriaExtra | date: 'dd/MM/yyyy'}}
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4 informacao" *ngIf="exibeDadosVistoria">
+        <input class="form-check-input-custom" type="checkbox" name="vistoriaExtra" id="vistoriaExtra" 
+        [checked]="medicao.vistoriaExtra" disabled>
+        <label class="form-check-label informacao" style="padding-left: 18px;" for="vistoriaExtra">
+          Vistoria Extra
+        </label>
+      </div>
+      <div class="col-sm-8 informacao"  *ngIf="exibeDadosVistoriaExtra">
+        <label class="titulo">Solicitante</label>
+        <p class="informacao">
+            {{medicao.solicitanteVistoriaExtra != null ? medicao.solicitanteVistoriaExtra.descricao : ''}}
+        </p>
+      </div>
+  </div>
+  </div>
+</siconv-fieldset>

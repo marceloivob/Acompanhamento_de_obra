@@ -1,0 +1,105 @@
+<siconv-tab-set class="tab-customizada">
+
+  <siconv-tab name="Responsável Técnico" (activeChange)='navegarAbaResponsavelTecnico()'></siconv-tab>
+  <siconv-tab name="ART / RRT" *ngIf="!contrato.inSocial" (activeChange)='navegarAbaARTRRT()' hint="Anotação / Registro de Responsabilidade Técnica"></siconv-tab>
+  <siconv-tab name="Documentação Complementar" (activeChange)='navegarAbaDocumentacaoComplementar()'></siconv-tab>
+
+  <siconv-tab name="Paralisação de Obra" [active]='true'>
+
+    <siconv-fieldset fieldsetTitle="Paralisação de Obra">
+      <button *ngIf="exibeBotaoIncluir" type="button" class="btn btn-primary btn-fieldset" (click)="prepararInclusao()">Incluir</button>
+
+      <siconv-table
+        [data]="lista"
+        [pagination]="true"
+        (listaPaginada)="atualizarPagina($event)"
+        fileExportName="listagemParalisacao"
+        [export]="tableDataExport">
+
+        <thead header>
+          <tr>
+            <th sortable-column="dataInicio" sortable-type="date" scope="col" colspan="2" style="min-width: 180px;">Período</th>
+            <th sortable-column="descricaoResponsavel" sortable-type="string" scope="col" style="min-width: 120px;">Responsável</th>
+            <th sortable-column="descricaoIndicativo" sortable-type="string" scope="col">Indicativo</th>
+            <th sortable-column="descricaoMotivo" sortable-type="string" scope="col">Motivo</th>
+            <th scope="col" colspan="2" style="min-width: 150px;">Anexos</th>
+            <th scope="col" style="min-width: 80px;">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <ng-container *ngFor="let paralisacao of listaPaginada">
+            <tr>
+              <td class="coluna-alinhada-top" style="width: 20px;" >
+                <siconv-toggle *ngIf="paralisacao.anexos && paralisacao.anexos.length > 1" title="Expandir/Contrair"
+                  [source]="paralisacao" (expanded)="expandirContrair(paralisacao)"></siconv-toggle>
+              </td>
+              <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(paralisacao)">{{ paralisacao.periodo }}</td>
+              <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(paralisacao)">{{ paralisacao.responsavel.descricao }}</td>
+              <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(paralisacao)">{{ paralisacao.indicativo.descricao }}</td>
+              <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(paralisacao)">{{ paralisacao.motivo.descricao }}</td>
+              <td class="coluna-alinhada-top no-padding-right" style="width: 5px;">
+                <div *ngFor="let anexo of paralisacao.anexosExpandidos">
+                  <a title="Download" [href]="anexo.url"><i class="fas fa-download md-icone"></i></a>
+                </div>
+              </td>
+              <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(paralisacao)">
+                <div *ngFor="let anexo of paralisacao.anexosExpandidos" style="line-height: 21px;">
+                  {{ anexo.nmArquivo }}
+                </div>
+              </td>
+              <td class="coluna-alinhada-top">
+                <a title="Detalhar" (click)="prepararDetalhamento(paralisacao.id)" class="link-acao-listagem">
+                  <i class="fas fa-search md-icone" aria-hidden="true"></i>
+                </a>
+                <ng-container *ngIf="canAccess('manter')">
+                  <ng-container *ngIf="paralisacao.permiteManutencao">
+                    <a title="Editar" (click)="prepararEdicao(paralisacao.id)" class="link-acao-listagem">
+                      <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                    </a>
+                    <a title="Excluir" (click)="prepararExclusao(modalConfirmacaoExcluir, paralisacao.id)" class="link-acao-listagem">
+                      <i class="fas fa-trash-alt md-icone" aria-hidden="true"></i>
+                    </a>
+                  </ng-container>
+                  <ng-container *ngIf="!paralisacao.permiteManutencao">
+                    <a title="Editar" class="link-acao-listagem">
+                      <i class="fas fa-pencil-alt md-icone-inativo" aria-hidden="true"
+                          tooltip="Não é possível editar, pois existe paralisação posterior"></i>
+                    </a>
+                    <a title="Excluir" class="link-acao-listagem">
+                      <i class="fas fa-trash-alt md-icone-inativo" aria-hidden="true"
+                          tooltip="Não é possível excluir, pois existe paralisação posterior"></i>
+                    </a>
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </siconv-table>
+
+      <ng-template #modalConfirmacaoExcluir>
+        <div class="close">
+          <a class="fas fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Exclusão de Paralisação</h4>
+        </div>
+        <div class="modal-body">
+          <p>A Paralisação de Obra será <strong>excluída</strong>. Deseja prosseguir?</p>
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarExclusao()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarExclusao()">Sim</button>
+          </div>
+        </div>
+      </ng-template>
+
+    </siconv-fieldset>
+
+  </siconv-tab>
+
+</siconv-tab-set>
+
+<footer class="footer-botoes">
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+</footer>

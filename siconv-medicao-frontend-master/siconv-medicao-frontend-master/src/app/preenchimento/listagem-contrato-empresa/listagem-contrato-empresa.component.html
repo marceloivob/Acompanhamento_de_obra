@@ -1,0 +1,13 @@
+<div class="conteudo-corpo">
+  <div *ngIf="contratos">
+    <siconv-fieldset fieldsetTitle="Contratos">
+        <app-card-contrato [contratos]="contratos"  [idFornecedor]="empresa.id" >
+        </app-card-contrato>
+    </siconv-fieldset>
+  </div>
+
+  <footer class="footer-botoes">
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+  </footer>
+
+</div>

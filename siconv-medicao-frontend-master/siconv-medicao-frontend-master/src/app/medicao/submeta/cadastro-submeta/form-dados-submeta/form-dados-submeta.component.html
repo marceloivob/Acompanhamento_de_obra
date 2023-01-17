@@ -1,0 +1,127 @@
+<form [formGroup]="medicaoSubmetaForm" *ngIf="medicaoSubmetaForm">
+<siconv-fieldset [fieldsetTitle]="submeta.descricao">
+
+  <div *ngIf="submeta.assinaturas.length > 0">
+    <app-dados-assinatura-submeta [assinaturas]="submeta.assinaturas">
+    </app-dados-assinatura-submeta>
+  </div>
+
+  <div *ngFor="let frenteObra of submeta.frentesObra, let indice = index">
+    <siconv-sub-fieldset class="preencher" fieldsetTitle="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frente de Obra: {{ frenteObra.descricao }}" [collapsible]="true">
+      <siconv-table
+        [data]="frenteObra.eventos"
+        [pagination]=false>
+          <thead header>
+            <tr>
+              <th  class="coluna-sem-borda" scope="col" ></th>
+              <th class="coluna-sem-borda" scope="col"></th>
+              <th class="coluna-sem-borda" scope="col"></th>
+              <th class="coluna-sem-borda" scope="col"></th>
+              <th class="coluna-sem-borda" scope="col"></th>
+              <th class="coluna-sem-borda coluna-acumulado" scope="col">Concluído</th>
+              <th class="coluna-sem-borda coluna-acumulado" scope="col">Concluído</th>
+              <th class="coluna-sem-borda coluna-acumulado" scope="col">Concluído</th>
+            </tr>
+            <tr>
+              <th style="width: 20px;"  scope="col">
+                <siconv-toggle title="Expandir/Contrair Todos" (expanded)="expandedChildren($event, indice)" ></siconv-toggle>
+              </th>
+              <th scope="col">Evento / Descrição do Serviço</th>
+              <th scope="col">Valor do Evento (R$)</th>
+              <th scope="col">Qtde.</th>
+              <th scope="col">Unid.</th>
+              <th class="coluna-acumulado" scope="col">Empresa</th>
+              <th class="coluna-acumulado" scope="col">Convenente</th>
+              <th class="coluna-acumulado" scope="col">Concedente /<br>Mandatária</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let evento of frenteObra.eventos">
+              <tr [class]="rowToggle.show ? 'trServicos-pai' : ''">
+                <td>
+                  <siconv-toggle [source]="evento"  #rowToggle></siconv-toggle>
+                </td>
+                <td (click)="expandCollapseClickOutsideIcon(evento)" >
+                  {{evento.descricao}}
+                </td>
+                <td (click)="expandCollapseClickOutsideIcon(evento)" >{{evento.valor | currency:'BRL':''}}</td>
+                <td (click)="expandCollapseClickOutsideIcon(evento)" colspan="2"></td>
+                <td>
+                  <div class="form-switch" *ngIf="exibirToggle('Empresa', evento)">
+                    <ui-switch formControlName="{{frenteObra.id}}-{{evento.id}}" (change)="atualizarDadosSubmeta('Empresa', frenteObra.id, evento.id, $event)" size="small"></ui-switch>
+                    <a title="Concluído na medição {{ evento.nrSeqMedicaoEmpresa | number: '2.0' }}" *ngIf="existeMarcacaoMedicaoAcumuladaEPermiteMarcacao('Empresa', evento)">
+                      <i class="fas fa-info-circle md-icone-info" aria-hidden="true"></i>
+                    </a>
+                  </div>
+                  <div class="form-check, informacao" *ngIf="exibirNrSequencial('Empresa', evento)">
+                    <p class="informacao">
+                      {{evento.nrSeqMedicaoEmpresa}}
+                    </p>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-switch" *ngIf="exibirToggle('Convenente', evento)">
+                    <ui-switch formControlName="{{frenteObra.id}}-{{evento.id}}" (change)="atualizarDadosSubmeta('Convenente', frenteObra.id, evento.id, $event)" size="small"></ui-switch>
+                    <a title="Concluído na medição {{ evento.nrSeqMedicaoConvenente | number: '2.0' }}" *ngIf="existeMarcacaoMedicaoAcumuladaEPermiteMarcacao('Convenente', evento)">
+                      <i class="fas fa-info-circle md-icone-info" aria-hidden="true"></i>
+                    </a>
+                  </div>
+                  <div class="form-check, informacao" *ngIf="exibirNrSequencial('Convenente', evento)">
+                    <p class="informacao">
+                      {{evento.nrSeqMedicaoConvenente}}
+                    </p>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-switch" *ngIf="exibirToggle('Concedente', evento)">
+                    <ui-switch formControlName="{{frenteObra.id}}-{{evento.id}}" (change)="atualizarDadosSubmeta('Concedente', frenteObra.id, evento.id, $event)" size="small"></ui-switch>
+                  </div>
+                  <div class="form-check, informacao" *ngIf="exibirNrSequencial('Concedente', evento)">
+                    <p class="informacao">
+                      {{evento.nrSeqMedicaoConcedente}}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+              <ng-container *ngIf="rowToggle.show">
+                <ng-container *ngFor="let servico of evento.servicos">
+                  <tr class="trServicos" >
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" ></td>
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" colspan="2">{{servico.descricao}}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" >{{servico.qtd}}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" >{{servico.sgUnidade}}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" ></td>
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" ></td>
+                    <td (click)="expandCollapseClickOutsideIcon(evento)" ></td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </tbody>
+      </siconv-table>
+    </siconv-sub-fieldset>
+  </div>
+</siconv-fieldset>
+
+<siconv-fieldset>
+  <siconv-sub-fieldset>
+    <siconv-table>
+      <thead header>
+        <tr>
+          <th class="coluna-sem-borda" scope="col">Total Medição {{ medicao.sequencial | number:'2.0' }} (R$):</th>
+          <th class="coluna-sem-borda coluna-acumulado" scope="col">{{ submeta.valorRealizadoEmpresa | currency:'BRL':''}}</th>
+          <th class="coluna-sem-borda coluna-acumulado" scope="col">{{ submeta.valorRealizadoConvenente | currency:'BRL':''}}</th>
+          <th class="coluna-sem-borda coluna-acumulado" scope="col">{{ submeta.valorRealizadoConcedente | currency:'BRL':''}}</th>
+        </tr>
+        <tr>
+          <th scope="col">Acumulado Medição {{ medicao.sequencial | number:'2.0' }} (R$):</th>
+          <th class="coluna-acumulado" scope="col">{{ submeta.valorRealizadoAcumuladoEmpresa | currency:'BRL':''}}</th>
+          <th class="coluna-acumulado" scope="col">{{ submeta.valorRealizadoAcumuladoConvenente | currency:'BRL':''}}</th>
+          <th class="coluna-acumulado" scope="col">{{ submeta.valorRealizadoAcumuladoConcedente | currency:'BRL':''}}</th>
+        </tr>
+      </thead>
+    </siconv-table>
+  </siconv-sub-fieldset>
+</siconv-fieldset>
+
+</form>

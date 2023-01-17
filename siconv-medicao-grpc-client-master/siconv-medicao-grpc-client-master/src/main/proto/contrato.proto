@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "br.gov.serpro.siconv.med.grpc";
+option java_outer_classname = "ContratoProto";
+
+package br.gov.serpro.siconv.med.grpc;
+
+message ContratoRequest {
+	int64 idContrato = 1;
+}
+
+message ContratoResponse {
+	bool configuracaoIniciada = 1;
+	bool medicaoIniciada = 2;
+}
+
+
+service Contrato {
+
+	rpc consultarContrato (ContratoRequest) returns (ContratoResponse);
+	
+}

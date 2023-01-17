@@ -1,0 +1,39 @@
+<siconv-fieldset
+  fieldsetTitle="{{ contrato.modalidade.descricao }} {{ contrato.numeroConvenioRepasse }}/{{ contrato.anoConvenioRepasse }}"
+  [collapsible]="collapsible" [collapsed]="collapsed">
+
+  <div class="row">
+    <div class="col-sm-4 informacao">
+      <label class="titulo">Número</label>
+      <p class="informacao">
+        <a href="{{ contrato.urlSiconvMedicao }}" target="_blank" rel="noopener" style="color:#008577;">
+          {{ contrato.numeroConvenioRepasse }}/{{ contrato.anoConvenioRepasse }}
+        </a>
+        <a href="{{ contrato.urlSiconvMedicao }}" target="_blank" rel="noopener" style="color:#008577;">
+          <img src="assets/img/link.jpg" alt="Link" target="_blank" style="color:#008577;">
+        </a>
+      </p>
+    </div>
+    <div class="col-sm-4 informacao">
+      <label class="titulo">Convenente</label>
+      <p class="informacao">
+        {{ contrato.nomeConvenente }}
+      </p>
+    </div>
+    <div class="col-sm-4 informacao">
+      <label class="titulo">UF</label>
+      <p class="informacao">
+        {{ contrato.localidade }}
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12 informacao">
+      <label class="titulo">Objeto</label>
+      <p class="informacao">
+        {{ contrato.nomeObjetoContratoRepasse }}
+      </p>
+    </div>
+  </div>
+
+</siconv-fieldset>

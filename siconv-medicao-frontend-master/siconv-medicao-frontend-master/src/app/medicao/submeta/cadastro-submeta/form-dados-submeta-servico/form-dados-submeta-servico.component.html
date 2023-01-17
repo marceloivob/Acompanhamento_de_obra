@@ -1,0 +1,358 @@
+<form [formGroup]="medicaoSubmetaForm" *ngIf="medicaoSubmetaForm">
+  <siconv-fieldset class="preencher-submeta" [fieldsetTitle]="submeta.descricao">
+
+    <div *ngIf="submeta.assinaturas.length > 0">
+      <app-dados-assinatura-submeta [assinaturas]="submeta.assinaturas">
+      </app-dados-assinatura-submeta>
+    </div>
+     <div *ngFor="let frenteObra of (submeta.frentesObra | filtrar:filtroPreenchimento)">
+        <siconv-sub-fieldset fieldsetTitle="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frente de Obra: {{ frenteObra.descricao }}" [collapsible]="true">
+          <siconv-table [pagination]=false>
+              <thead header>
+                <tr>
+                  <th class="coluna-sem-borda" scope="col"></th>
+                  <th class="coluna-sem-borda" scope="col"></th>
+                  <th class="coluna-sem-borda" scope="col"></th>
+                  <th class="coluna-sem-borda" scope="col"></th>
+                  <th scope="colgroup" class="coluna-com-borda-inferior" colspan="2">
+                    <div>Empresa</div>
+                  </th>
+                  <th scope="colgroup" class="coluna-com-borda-inferior" colspan="2">
+                    <div>Convenente</div>
+                  </th>
+                  <th scope="colgroup" class="coluna-com-borda-inferior" colspan="2">
+                    <div>Concedente / Mandatária</div>
+                  </th>
+                </tr>
+                <tr>
+                  <th style="width: 1%" scope="col">
+                    <siconv-toggle [show]=true title="Expandir/Contrair Todos" (expanded)="expandAllMacrosservico(!$event, frenteObra)"></siconv-toggle>
+                  </th>
+                  <th scope="col" style="width: 9%">Serviço</th>
+                  <th scope="col" style="width: 11%"></th>
+                  <th scope="col" style="width: 2%"></th>
+                  <th scope="col" style="width: 16%">Período</th>
+                  <th scope="col" style="width: 10%">Acumulado</th>
+                  <th scope="col" style="width: 16%">Período <i tooltip={{msgSomatorioAgrupadas}} *ngIf="isEditConvenente() && medicao.isMedicaoAgrupadora" class="fas fa-info-circle" style="color:#3E67B1; padding-left: 5px;" aria-hidden="true"></i></th>
+                  <th scope="col" style="width: 10%">Acumulado</th>
+                  <th scope="col" style="width: 16%">Período <i tooltip={{msgSomatorioAgrupadas}} *ngIf="isEditConcedente() && medicao.isMedicaoAgrupadora" class="fas fa-info-circle" style="color:#3E67B1; padding-left: 5px;" aria-hidden="true"></i></th>
+                  <th scope="col" style="width: 10%">Acumulado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let macroservico of (frenteObra.macroServicosView | filtrar:filtroPreenchimento), let indiceMacro = index">
+                  <tr [class]="rowToggle.show ? 'trServicos-pai' : ''" [style.background-color]="indiceMacro % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+                    <td>
+                      <siconv-toggle [show]=true [source]="macroservico" #rowToggle></siconv-toggle>
+                    </td>
+                    <td (click)="expandCollapseClickOutsideIcon(macroservico)" colspan="9">
+                      Macrosserviço: {{macroservico.numero}} - {{macroservico.descricao}}
+                    </td>
+                  </tr>
+                  <ng-container *ngFor="let servico of (macroservico.servicos | filtrar:filtroPreenchimento), let indiceServico = index">
+                    <tr [hidden]="!rowToggle.show" [style.background-color]="indiceServico % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+                      <td colspan="2" rowspan="3">
+                        <div class="coluna-texto-truncado" placement="right" tooltip="{{macroservico.numero + '.' + servico.numero + ' - '  + servico.descricao}}">
+                          {{macroservico.numero}}.{{servico.numero}} - {{servico.descricao}}
+                        </div>
+                      </td>
+                      <td><strong>Planejado:</strong><br>{{servico.qtd | currency:'BRL':''}} {{servico.sgUnidade}}</td>
+                      <td rowspan="2">({{servico.sgUnidade}})</td>
+                      <td rowspan="2">
+                        <div *ngIf="exibirCampoPreenchimento('Empresa', servico)">
+                          <siconv-input #inputEmpresa
+                            [required]="isCampoPreenchimentoEmpresaObrigatorio()"
+                            currency=2
+                            (change)="onChangeInputQtdInformadaEmpresa(frenteObra.id, macroservico.id, servico.id)"
+                            (unmask)="onBlurInputQtdInformadaEmpresa(frenteObra.id, macroservico.id, servico.id)"
+                            formControlName="{{frenteObra.id}}-{{servico.id}}"
+                            style="{'text-align' : 'left'}">
+                          </siconv-input>
+                          <siconv-local-messages [control]="inputEmpresa.ngControl" requiredMessage="Campo de preenchimento obrigatório.">
+                            <div *ngIf="inputEmpresa.ngControl.hasError('qtdMaximaInvalida')">
+                              {{ inputEmpresa.ngControl.errors.qtdMaximaInvalida.msg }}
+                              <i *ngIf="inputEmpresa.ngControl.errors.qtdMaximaInvalida.detalhe" [tooltip]="'Ver detalhes'" class="fas fa-search md-icone"
+                                (click)="exibirMemoriaCalculo('Empresa', modalMemoriaCalculoEmpresa, inputEmpresa.ngControl.errors.qtdMaximaInvalida.detalhe.memoriaCalculo)"
+                                style="font-size:18px; color:#d32f2f; padding-left:5px;" data-placement="right" aria-hidden="true"></i>
+                            </div>
+                          </siconv-local-messages>
+                        </div>
+                        <div class="form-check, informacao" *ngIf="exibirCampoQtdRealizado('Empresa', servico)">
+                          <p class="informacao">
+                            {{servico.qtdRealizadoEmpresa | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td rowspan="2" style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.qtdAcumuladoEmpresa | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td rowspan="2">
+                        <div *ngIf="exibirCampoPreenchimento('Convenente', servico)">
+                          <div style="width: 90%; display: inline-block;">
+                            <siconv-input #inputConvenente
+                              [required]="true"
+                              currency=2
+                              (unmask)="onBlurInputQtdInformadaConvenente(frenteObra.id, macroservico.id, servico.id, servico)"
+                              formControlName="{{frenteObra.id}}-{{servico.id}}"
+                              style="{'text-align' : 'left'}">
+                            </siconv-input>
+                          </div>
+                          <div *ngIf="formControl[frenteObra.id + '-' + servico.id].exibeHintGlosa" style="width: 5%; display: inline-block; padding-left: 5px;">
+                            <i [tooltip]="MSG_GLOSA_EFETUADA" *ngIf="servico.possuiGlosaConvenente" class="fas fa-exclamation-triangle" style="color:#c05f0f; padding-left: 5px;" aria-hidden="true"></i>
+                            <i [tooltip]="MSG_GLOSAS_ANTERIORES" *ngIf="!servico.possuiGlosaConvenente && servico.possuiGlosasAnterioresConvenente" class="fas fa-exclamation-triangle" style="color:#006400; padding-left: 5px;" aria-hidden="true"></i>
+                          </div>
+                          <siconv-local-messages [control]="inputConvenente.ngControl" requiredMessage="Campo de preenchimento obrigatório.">
+                            <div *ngIf="inputConvenente.ngControl.hasError('qtdMaximaInvalida')">
+                              {{ inputConvenente.ngControl.errors.qtdMaximaInvalida.msg }}
+                              <i *ngIf="inputConvenente.ngControl.errors.qtdMaximaInvalida.detalhe" [tooltip]="'Ver detalhes'" class="fas fa-search md-icone"
+                                (click)="exibirMemoriaCalculo('Convenente', modalMemoriaCalculoConvenente, inputConvenente.ngControl.errors.qtdMaximaInvalida.detalhe.memoriaCalculo)"
+                                style="font-size:18px; color:#d32f2f; padding-left:5px;" data-placement="right" aria-hidden="true"></i>
+                            </div>
+                          </siconv-local-messages>
+                        </div>
+                        <div class="form-check, informacao" *ngIf="exibirCampoQtdRealizado('Convenente', servico)">
+                          <div style="display: inline-block;">
+                          <p class="informacao">
+                            {{servico.qtdRealizadoConvenente | currency:'BRL':''}}
+                          </p>
+                          </div>
+                          <div style="display: inline-block;">
+                            <i [tooltip]="MSG_GLOSA_EFETUADA" *ngIf="servico.possuiGlosaConvenente" class="fas fa-exclamation-triangle" style="color:#c05f0f; padding-left: 5px;" aria-hidden="true"></i>
+                            <i [tooltip]="MSG_GLOSAS_ANTERIORES" *ngIf="!servico.possuiGlosaConvenente && servico.possuiGlosasAnterioresConvenente" class="fas fa-exclamation-triangle" style="color:#006400; padding-left: 5px;" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </td>
+                      <td rowspan="2" style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.qtdAcumuladoConvenente | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td rowspan="2">
+                        <div *ngIf="exibirCampoPreenchimento('Concedente', servico)">
+                          <div style="width: 90%; display: inline-block;">
+                            <siconv-input #inputConcedente
+                              [required]="true"
+                              currency=2
+                              (unmask)="onBlurInputQtdInformadaConcedente(frenteObra.id, macroservico.id, servico.id, servico)"
+                              formControlName="{{frenteObra.id}}-{{servico.id}}"
+                              style="{'text-align' : 'left'}">
+                            </siconv-input>
+                          </div>
+                          <div *ngIf="formControl[frenteObra.id + '-' + servico.id].exibeHintGlosa" style="width: 5%; display: inline-block; padding-left: 5px;">
+                            <i [tooltip]="MSG_GLOSA_EFETUADA" *ngIf="servico.possuiGlosaConcedente" class="fas fa-exclamation-triangle" style="color:#c05f0f; padding-left: 5px;" aria-hidden="true"></i>
+                            <i [tooltip]="MSG_GLOSAS_ANTERIORES" *ngIf="!servico.possuiGlosaConcedente && servico.possuiGlosasAnterioresConcedente" class="fas fa-exclamation-triangle" style="color:#006400; padding-left: 5px;" aria-hidden="true"></i>
+                          </div>
+                          <siconv-local-messages [control]="inputConcedente.ngControl" requiredMessage="Campo de preenchimento obrigatório.">
+                            <div *ngIf="inputConcedente.ngControl.hasError('qtdMaximaInvalida')">
+                              {{ inputConcedente.ngControl.errors.qtdMaximaInvalida.msg }}
+                            </div>
+                          </siconv-local-messages>
+                        </div>
+                        <div class="form-check, informacao" *ngIf="exibirCampoQtdRealizado('Concedente', servico)">
+                          <div style="display: inline-block;">
+                          <p class="informacao">
+                            {{servico.qtdRealizadoConcedente | currency:'BRL':''}}
+                          </p>
+                          </div>
+                          <div style="display: inline-block;">
+                            <i [tooltip]="MSG_GLOSA_EFETUADA" *ngIf="servico.possuiGlosaConcedente" class="fas fa-exclamation-triangle" style="color:#c05f0f; padding-left: 5px;" aria-hidden="true"></i>
+                            <i [tooltip]="MSG_GLOSAS_ANTERIORES" *ngIf="!servico.possuiGlosaConcedente && servico.possuiGlosasAnterioresConcedente" class="fas fa-exclamation-triangle" style="color:#006400; padding-left: 5px;" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </td>
+                      <td rowspan="2" style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.qtdAcumuladoConcedente | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr [hidden]="!rowToggle.show" [style.background-color]="indiceServico % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+                      <td><strong>Valor Unitário:</strong><br>R$ {{servico.preco | currency:'BRL':''}}</td>
+                    </tr>
+                    <tr [hidden]="!rowToggle.show" [style.background-color]="indiceServico % 2 === 0 ? '#f7f7f7' : '#ffffff'">
+                      <td><strong>Valor Total:</strong><br>R$ {{servico.vlTotalServico | currency:'BRL':''}}</td>
+                      <td>(R$)</td>
+                      <td style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.valorRealizadoEmpresa | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.valorAcumuladoEmpresa | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.valorRealizadoConvenente | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.valorAcumuladoConvenente | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.valorRealizadoConcedente | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                      <td style="text-align: left;">
+                        <div class="form-check, informacao">
+                          <p class="informacao">
+                            {{servico.valorAcumuladoConcedente | currency:'BRL':''}}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+          </siconv-table>
+        </siconv-sub-fieldset>
+    </div>
+
+    <ng-template #modalMemoriaCalculoEmpresa>
+      <div class="close">
+        <a class="fa fa-times" (click)="modalMemoriaCalculoRef.hide()"></a>
+      </div>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Memória de Cálculo</h4>
+      </div>
+      <div class="modal-body">
+        <siconv-table>
+          <thead header>
+            <tr>
+              <th class="coluna-sem-borda" scope="col" width="60%">Medição - Período</th>
+              <th class="coluna-sem-borda" scope="col" width="20%">Período</th>
+              <th class="coluna-sem-borda" scope="col" width="20%">Acumulado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let memoria of memoriaCalculo">
+              <tr class="informacao">
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.sequencial}} - {{memoria.dataInicio | date : 'dd/MM/yyyy'}} a {{memoria.dataFim | date : 'dd/MM/yyyy'}}</p></th>
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.periodoEmpresa | currency:'BRL':''}}</p></th>
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.acumuladoEmpresa | currency:'BRL':''}}</p></th>
+              </tr>
+            </ng-container>
+          </tbody>
+        </siconv-table>
+      </div>
+    </ng-template>
+
+    <ng-template #modalMemoriaCalculoConvenente>
+      <div class="close">
+        <a class="fa fa-times" (click)="modalMemoriaCalculoRef.hide()"></a>
+      </div>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Memória de Cálculo</h4>
+      </div>
+      <div class="modal-body">
+        <siconv-table>
+          <thead header>
+            <tr>
+              <th class="coluna-sem-borda" scope="col" width="32%" rowspan="2">Medição - Período</th>
+              <th scope="colgroup" class="coluna-com-borda-inferior" width="34%" colspan="2">
+                <div>Empresa</div>
+              </th>
+              <th scope="colgroup" class="coluna-com-borda-inferior" width="34%" colspan="2">
+                <div>Convenente</div>
+              </th>
+            </tr>
+            <tr>
+              <th class="coluna-sem-borda" scope="col" width="17%">Período</th>
+              <th class="coluna-sem-borda" scope="col" width="17%">Acumulado</th>
+              <th class="coluna-sem-borda" scope="col" width="17%">Período</th>
+              <th class="coluna-sem-borda" scope="col" width="17%">Acumulado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let memoria of memoriaCalculo">
+              <tr class="informacao">
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.sequencial}} - {{memoria.dataInicio | date : 'dd/MM/yyyy'}} a {{memoria.dataFim | date : 'dd/MM/yyyy'}}</p></th>
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.periodoEmpresa | currency:'BRL':''}}</p></th>
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.acumuladoEmpresa | currency:'BRL':''}}</p></th>
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.periodoConvenente | currency:'BRL':''}}</p></th>
+                <th class="coluna-sem-borda" scope="col"><p class="informacao" style="font-size: 12px;">{{ memoria.acumuladoConvenente | currency:'BRL':''}}</p></th>
+              </tr>
+            </ng-container>
+          </tbody>
+        </siconv-table>
+      </div>
+    </ng-template>
+  </siconv-fieldset>
+
+  <siconv-fieldset>
+    <siconv-sub-fieldset class="totalizador-preencher-submeta">
+      <siconv-table>
+        <thead header>
+          <tr>
+            <th class="coluna-sem-borda" scope="col"></th>
+            <th class="coluna-sem-borda" scope="col"></th>
+            <th class="coluna-sem-borda" scope="col"></th>
+            <th class="coluna-sem-borda" scope="col"></th>
+            <th scope="colgroup" class="coluna-com-borda-inferior" colspan="2">
+              <div>Empresa</div>
+            </th>
+            <th scope="colgroup" class="coluna-com-borda-inferior" colspan="2">
+              <div>Convenente</div>
+            </th>
+            <th scope="colgroup" class="coluna-com-borda-inferior" colspan="2">
+              <div>Concedente / Mandatária</div>
+            </th>
+          </tr>
+          <tr>
+            <th style="width: 1%" scope="col"></th>
+            <th scope="col" style="width: 9%"></th>
+            <th scope="col" style="width: 11%"></th>
+            <th scope="col" style="width: 2%"></th>
+            <th scope="col" style="width: 16%">R$</th>
+            <th scope="col" style="width: 10%">%</th>
+            <th scope="col" style="width: 16%">R$</th>
+            <th scope="col" style="width: 10%">%</th>
+            <th scope="col" style="width: 16%">R$</th>
+            <th scope="col" style="width: 10%">%</th>
+          </tr>
+          <tr>
+            <th class="coluna-sem-borda" scope="col" colspan="4">Total Medição {{ medicao.sequencial | number:'2.0' }}:</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.valorRealizadoEmpresa | currency:'BRL':''}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.percentualRealizadoEmpresa | number:'1.2-2':'pt'}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.valorRealizadoConvenente | currency:'BRL':''}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.percentualRealizadoConvenente | number:'1.2-2':'pt'}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.valorRealizadoConcedente | currency:'BRL':''}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.percentualRealizadoConcedente | number:'1.2-2':'pt'}}</th>
+          </tr>
+          <tr>
+            <th class="coluna-sem-borda" scope="col" colspan="4">Acumulado Medição {{ medicao.sequencial | number:'2.0' }}:</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.valorRealizadoAcumuladoEmpresa | currency:'BRL':''}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.percentualRealizadoAcumuladoEmpresa | number:'1.2-2':'pt'}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.valorRealizadoAcumuladoConvenente | currency:'BRL':''}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.percentualRealizadoAcumuladoConvenente | number:'1.2-2':'pt'}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.valorRealizadoAcumuladoConcedente | currency:'BRL':''}}</th>
+            <th class="coluna-sem-borda" scope="col">{{ submeta.percentualRealizadoAcumuladoConcedente | number:'1.2-2':'pt'}}</th>
+          </tr>
+        </thead>
+      </siconv-table>
+    </siconv-sub-fieldset>
+  </siconv-fieldset>
+
+</form>

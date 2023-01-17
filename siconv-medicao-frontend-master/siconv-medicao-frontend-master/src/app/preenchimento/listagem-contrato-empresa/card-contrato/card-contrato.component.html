@@ -1,0 +1,121 @@
+<div class="container-card">
+  <div class="card-azul" *ngFor="let contrato of contratos, let indice = index">
+    <div class="conteudo-card">
+      <div id="header">
+        <div class="cabecalho">
+          Contrato de Execução e/ou Fornecimento {{ contrato.numeroContrato }}
+        </div>
+        <div class="card-label" title="{{contrato.nomeObjetoContratoFornecimento}}">
+          {{contrato.nomeObjetoContratoFornecimento | objeto}}
+        </div>
+      </div>
+
+      <div class="linhas-card">
+        <div *ngIf="contrato.qtdeDiasSemMedicao > 0">
+              <div class="card-texto" *ngIf="!contrato.inContratoAtrasado">
+                <img src="assets/img/agenda.png" class="img" alt="logo" title="Dias sem medição"
+                  style="width: 20px; height: 20px;">
+                  {{ contrato.qtdeDiasSemMedicao }} dias
+              </div>
+
+              <div class="card-texto" *ngIf="contrato.inContratoAtrasado">
+                <img src="assets/img/agenda-atraso.png" class="img" alt="logo" title="Dias sem medição"
+                  style="width: 20px; height: 20px;">
+                  {{ contrato.qtdeDiasSemMedicao }} dias
+               </div>
+        </div>
+        <div *ngIf="contrato.inContratoParalisado">
+          <div class="card-texto">
+            <i title="Obra Paralisada" class="fas fa-pause-circle fa-lg" style="color:#FF0000;"></i>
+            Obra Paralisada
+          </div>
+        </div>
+      </div>
+
+      <div class="linhas-card">
+        <div>
+          <div class="card-sublabel">
+            Valor Total do Contrato
+          </div>
+          <div class="card-texto">
+            {{ contrato.valorContrato | currency:'BRL' }}
+          </div>
+        </div>
+        <div>
+          <div class="card-sublabel">
+            Quantidade de Medições Cadastradas
+          </div>
+          <div class="card-texto">
+            {{ contrato.qtdeMedicoes }}
+          </div>
+        </div>
+      </div>
+
+      <div class="linhas-card">
+        <div>
+          <div class="card-sublabel">
+            {{ contrato.modalidade.descricao }}
+          </div>
+          <div class="card-texto">
+            {{ contrato.numeroConvenioRepasse }}/{{ contrato.anoConvenioRepasse }}
+          </div>
+        </div>
+        <div>
+          <div class="card-sublabel">
+            UF
+          </div>
+          <div class="card-texto">
+            {{ contrato.localidade }}
+          </div>
+        </div>
+      </div>
+
+      <div class="linhas-card">
+        <div>
+          <div class="card-sublabel">
+            Acompanhado por Eventos
+          </div>
+          <div class="card-texto">
+            {{ contrato.inAcompEvento ? 'SIM' : 'NÃO' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="linhas-card">
+        <div>
+          <div class="card-sublabel">
+            OBJETO DO {{ contrato.modalidade.descricao }}
+          </div>
+          <div class="card-texto">
+            {{ contrato.nomeObjetoContratoRepasse }}
+          </div>
+        </div>
+      </div>
+
+      <div class="linhas-card">
+        <div>
+            <div class="card-sublabel">
+
+              <a title="Detalhar Dados do Contrato" (click)="exibirConfiguraCtef(contrato)"
+                style="min-width: 20px; display: inline-block; padding-right: 2px">
+                <img src="assets/img/AtualizarDadosContraoIcon.svg" class="img md-icone" alt="logo"
+                style="width: 25px; height: 25px;">
+              </a>
+
+              <a title="Realizar Acompanhamento" *ngIf="contrato.isConfiguradoParaMedicao"
+                (click)="abrirMedicao(contrato)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                  <i class="fas fa-tasks md-icone"
+                  style="font-size:18px;color:#3E67B1;  padding-left: 5px;"
+                  aria-hidden="true"></i>
+              </a>
+              <a title="Não é possível realizar acompanhamento pois os dados do contrato não foram atualizados pelo convenente."
+                *ngIf="!contrato.isConfiguradoParaMedicao" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                <i class="fas fa-tasks md-icone md-icone-inativo" style="padding-left: 5px;" aria-hidden="true"></i>
+              </a>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

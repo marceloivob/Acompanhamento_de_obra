@@ -1,0 +1,20 @@
+##################################################################
+# Profile para o ambiente de homologacao do estaleiro (siconv-h) #
+##################################################################
+
+quarkus:
+  log:
+    category:
+      br.gov:
+        level: DEBUG
+
+medicao:
+  rest:
+    showErrorStackTrace: true
+
+integrations:
+  PUBLIC:
+    IDP:
+      endpoint: https://hom4.idp.plataformamaisbrasil.gov.br/idp/
+    SICONV:
+      endpoint: https://hom4.voluntarias.plataformamaisbrasil.gov.br/voluntarias

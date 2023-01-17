@@ -1,0 +1,16 @@
+.coluna-sem-borda {
+    border-bottom: none !important;
+}
+
+.coluna-acumulado {
+    width: 10%;
+}
+
+.ui-switch {
+    display: inline-block; 
+    vertical-align: middle;
+}
+
+.ui-switch ~ a {
+    padding-left: 4px;
+}

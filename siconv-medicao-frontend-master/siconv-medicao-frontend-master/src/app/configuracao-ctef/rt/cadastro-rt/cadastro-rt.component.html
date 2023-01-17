@@ -1,0 +1,221 @@
+<div *ngIf="contrato">
+
+  <form [formGroup]="cadastrarRespTecnicoForm" >
+      <siconv-fieldset fieldsetTitle="Responsável Técnico" [collapsible]="false">
+          <div *ngIf="contrato">
+
+                <div class="row">
+                  <div class="col-md-2 informacao" *ngIf="acao === 'incluir'">
+                      <siconv-input
+                            label="CPF"
+                            [siconvHasError]="cpfCtrl"
+                            [required]="true"
+                            mask="999.999.999-99"
+                            siconvValidCpf
+                            formControlName="cpf">
+                      </siconv-input>
+                      <siconv-local-messages [control]="cpfCtrl" requiredMessage="Campo de preenchimento obrigatório."></siconv-local-messages>
+                  </div>
+
+                  <div class="col-md-2 informacao">
+                      <label>Tipo</label>
+                      <div class="form-check">
+                          <input class="form-check-input" type="radio" name="tipo" id="exampleRadios1" value="EXE" [attr.checked]="(tipoConsulta == 'EXE') ? '' : null" (click)="verificaTipoConsulta($event)" [disabled]="emDetalhamento || (emEdicaoResp && !emEdicaoRespPorBuscaCPF)">
+                          <label class="form-check-label" for="execucao">
+                            Execução
+                          </label>
+                      </div>
+                      <div class="form-check">
+                          <input class="form-check-input" type="radio" name="tipo" id="exampleRadios2" value="FIS" [attr.checked]="(tipoConsulta == 'FIS') ? '' : null" (click)="verificaTipoConsulta($event)" [disabled]="emDetalhamento || (emEdicaoResp && !emEdicaoRespPorBuscaCPF)">
+                          <label class="form-check-label" for="fiscalizacao">
+                            Fiscalização
+                          </label>
+                      </div>
+                  </div>
+                  <div class="col-md-2 informacao" *ngIf="acao !== 'incluir' && acao !== 'editar'" >
+                    <label>Data Inclusão</label>
+                    <p class="informacao">{{ responsavelTecnicoPesquisado.dataInclusao | date : 'dd/MM/yyyy' }}</p>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button *ngIf="canAccess('pesquisar')" type="button" class="btn btn-primary" (click)="pesquisar(modalConfirmacaoEdicao)" [style.display]="emDetalhamento || (emEdicaoResp && !emEdicaoRespPorBuscaCPF) ? 'none' : 'block'">Pesquisar</button>
+                    </div>
+                </div>
+                <br>
+                <div *ngIf="emEdicaoResp || emDetalhamento" class="row">
+                  <div class="col-md-4 informacao">
+                      <siconv-input
+                                label="Identificação"
+                                required="true"
+                                formControlName="identificacao">
+                      </siconv-input>
+                  </div>
+                </div>
+
+                <div *ngIf="emEdicaoResp  || emDetalhamento" class="row">
+                    <div class="col-md-4 informacao">
+                        <siconv-input
+                            label="E-mail"
+                            required="true"
+                            formControlName="email">
+                        </siconv-input>
+                    </div>
+
+                    <div *ngIf="emEdicaoResp  || emDetalhamento" class="col-md-2 informacao">
+                        <siconv-input
+                                  label="Telefone"
+                                  required="true"
+                                  [siconvHasError]="telefoneCtrl"
+                                  formControlName="telefone"
+                                  maxlength="15"
+                                  (input)="formatarTelefone()">
+                        </siconv-input>
+                        <siconv-local-messages [control]="telefoneCtrl" requiredMessage="Campo de preenchimento obrigatório." >
+                            <div *ngIf="telefoneCtrl.dirty && telefoneCtrl.hasError('validateTelefone')">
+                                Telefone Inválido.
+                            </div>
+                        </siconv-local-messages>
+                    </div>
+                </div>
+          </div>
+      </siconv-fieldset>
+
+      <siconv-fieldset *ngIf="emEdicaoResp || emDetalhamento" fieldsetTitle="Registros Profissionais" [collapsible]="false">
+            <div class="row">
+                <div class="col-md-8">
+                              <button *ngIf="canAccess('incluirRP')"  type="button" class="btn btn-primary btn-fieldset" (click)="incluirReg()" [style.display]="emDetalhamento ? 'none' : 'block'">Incluir</button>
+
+                              <siconv-table
+                                    [data]="data"
+                                    [fileExportName]="fileExportName"
+                                    [export]="export"
+                                    [pagination]="true"
+                                    (listaPaginada)="getListaPaginada($event)">
+                                    <thead header>
+                                        <tr>
+                                            <th class="coluna-sem-borda" scope="col" >Associar</th>
+                                            <th class="coluna-sem-borda" scope="col">Atividade</th>
+                                            <th class="coluna-sem-borda" scope="col">CAU</th>
+                                            <th class="coluna-sem-borda" scope="col">CREA</th>
+                                            <th class="coluna-sem-borda" scope="col">UF</th>
+                                            <th class="coluna-sem-borda" *ngIf="!emDetalhamento" scope="col">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of lista">
+
+                                            <td class="tdRadio">
+                                                <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="associacao" id="associacao" value="item.id" [checked]="(item.contratos && item.obterContratoVinculado(contrato.id)) || data.length == 1" (click)="associarRPContrato(item)" [disabled]="emDetalhamento">
+                                                </div>
+                                            </td>
+
+                                            <td>{{item.atividade}}</td>
+
+                                            <ng-template [ngIf]="item.atividade === 'Arquitetura' ">
+                                              <td>{{item.nrCreaCau}}</td>
+                                              <td></td>
+                                            </ng-template>
+
+                                            <ng-template [ngIf]="item.atividade === 'Engenharia' ">
+                                              <td></td>
+                                              <td>{{item.nrCreaCau}}</td>
+                                            </ng-template>
+
+                                            <td>{{item.uf}}</td>
+
+                                            <td *ngIf="!emDetalhamento">
+                                              <a title="Editar" *ngIf="canAccess('editarRP')" (click)="prepararAlteracaoRegistroProfissional(item)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                                                  <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                                              </a>
+                                              <a *ngIf="canAccess('excluirRP') && !isRPAssociadoOutroCTEF(item)" (click)="excluirRP(item)">
+                                                  <em title="Excluir" alt="Excluir" class="fas fa-trash-alt md-icone"></em>
+                                              </a>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                              </siconv-table>
+                </div>
+            </div>
+            <div class="row">
+              <div *ngIf="emEdicaoReg && !emDetalhamento" class="col-md-2">
+                  <siconv-select
+                    label="Atividade"
+                    required="true"
+                    description=""
+                    [labels]="atividades|nomeAtividade"
+                    (selectChange)="selectChange($event)"
+                    [values]="atividades"
+                    formControlName="atividade">
+                  </siconv-select>
+                  <siconv-local-messages [control]="atividadeCtrl" requiredMessage="Campo de preenchimento obrigatório." ></siconv-local-messages>
+              </div>
+
+              <div *ngIf="atividadeSelecionada === 'arq' && emEdicaoReg" class="col-md-2 informacao">
+                    <siconv-input
+                              label="CAU"
+                              required="true"
+                              maxlength=50
+                              formControlName="crea_cau">
+                    </siconv-input>
+                    <siconv-local-messages [control]="creacauCtrl" requiredMessage="Campo de preenchimento obrigatório." ></siconv-local-messages>
+              </div>
+
+              <div *ngIf="atividadeSelecionada === 'eng' && emEdicaoReg"class="col-md-2 informacao">
+                  <siconv-input
+                            label="CREA"
+                            required="true"
+                            maxlength=50
+                            formControlName="crea_cau">
+                  </siconv-input>
+                  <siconv-local-messages [control]="creacauCtrl" requiredMessage="Campo de preenchimento obrigatório." ></siconv-local-messages>
+              </div>
+
+              <div *ngIf="atividadeSelecionada === 'eng' && emEdicaoReg" class="col-md-2">
+                  <siconv-select
+                      label="UF"
+                      required="true"
+                      description=""
+                      [labels]="ufs|siglaUF"
+                      [values]="ufs"
+                      formControlName="uf">
+                  </siconv-select>
+                  <siconv-local-messages [control]="ufCtrl" requiredMessage="Campo de preenchimento obrigatório." ></siconv-local-messages>
+              </div>
+
+              <div *ngIf="canAccess('adicionarRP') && emEdicaoReg && !rpAnterior" class="col-md-2">
+                  <button type="button" class="btn btn-primary" style="margin-top: 23px;" (click)="adicionarRegistro()">Adicionar</button>
+              </div>
+              <div *ngIf="canAccess('alterarRP') && emEdicaoReg && rpAnterior" class="col-md-2">
+                  <button type="button" class="btn btn-primary" style="margin-top: 23px;" (click)="alterarRegistro()">Alterar</button>
+              </div>
+          </div>
+      </siconv-fieldset>
+  </form>
+
+  <footer class="footer-botoes">
+
+      <button *ngIf="emEdicaoResp" type="button" class="btn btn-secondary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+      <button *ngIf="canAccess('salvar') && emEdicaoResp" type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="salvar()">Salvar</button>
+      <button *ngIf="!emEdicaoResp" type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+  </footer>
+
+  <ng-template #modalConfirmacaoEdicao>
+    <div class="close">
+      <a class="fa fa-times" (click)="modalConfirmacaoEdicaoRT.hide()"></a>
+    </div>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Editar Responsável Técnico</h4>
+    </div>
+    <div class="modal-body">
+      <p>O registro já existe. Deseja prosseguir para a edição do registro?</p>
+      <div class="modal-buttons">
+        <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="cancelaEdicao()">Não</button>
+        <button type="button" class="btn btn-primary" (click)="confirmaEdicao()">Sim</button>
+      </div>
+    </div>
+  </ng-template>
+
+</div>

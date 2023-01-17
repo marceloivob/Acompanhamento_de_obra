@@ -1,0 +1,76 @@
+$card-color-azul: #0a6aa6;
+$font-family-open-sans-regular: 'OpenSans-Regular';
+
+.container-card {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card-azul {
+  width: 50%;
+  margin-bottom: 20px;
+}
+
+.conteudo-card {
+  font-family: $font-family-open-sans-regular;
+  border-left: 8px solid $card-color-azul;
+  box-shadow: -1px 0px 2px 0px #cfcfcf, 0px 0px 0px 1px #dfdfdf;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  height: 100%;
+  width: 96%;
+}
+
+.conteudo-card:hover {
+  box-shadow: 0px 0px 5px #666666;
+  transition: all 0.3s ease-out;
+}
+
+.cabecalho {
+  width: 100%;
+  font-size: 15px;
+  font-style: normal;
+  text-transform: uppercase;
+  margin-top: 10px;
+  letter-spacing: 0.8px;
+  color: $card-color-azul;
+}
+
+.card-label {
+  font-family: $font-family-open-sans-regular;
+  font-size: 15px;
+  color: #454546;
+  width: 100%;
+  text-align: left;
+  padding-bottom: 10px;
+  line-height: 1.1;
+  margin-top: 4px;
+}
+
+.card-sublabel {
+  font-family: $font-family-open-sans-regular;
+  font-size: 11px;
+  color: #737373;
+  width: 100%;
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+  float: left;
+}
+
+.card-texto {
+  font-family: $font-family-open-sans-regular;
+  font-size: 14px;
+  color: #454546;
+  width: 100%;
+  text-align: left;
+  letter-spacing: 0.07px;
+}
+
+.linhas-card {
+  display: flex;
+  margin-top: 20px;
+}
+
+.linhas-card > div {
+  flex: 1 1 270px;
+}

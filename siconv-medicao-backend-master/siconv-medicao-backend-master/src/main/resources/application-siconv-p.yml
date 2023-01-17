@@ -1,0 +1,6 @@
+#######################################################################
+# Profile para o ambiente de producao do estaleiro (siconv-p)         #
+#                                                                     #
+# Obs.: Todas as configuracoes ja estao definidas no application.yml, #
+#       nao sendo necessario nenhum ajuste especifico.                #
+#######################################################################

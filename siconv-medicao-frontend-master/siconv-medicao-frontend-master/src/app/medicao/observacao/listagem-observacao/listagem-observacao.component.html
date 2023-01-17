@@ -1,0 +1,295 @@
+<siconv-tab-set class="tab-customizada">
+  <siconv-tab name="Medição" (activeChange)='navegarAbaMedicao()'></siconv-tab>
+  <siconv-tab name="Observações" [active]="true">
+
+    <siconv-fieldset *ngIf="medicao" fieldsetTitle="{{tituloListaObsMedicaoAtual}}">
+
+      <div class="row">
+        <div class="col-sm-4 informacao">
+          <div *ngIf="data && data.length > 0"  class="form-check move-left">
+            <input class="form-check-input" type="checkbox" id="exibirAnexoInativoAgrupadora" value="false" (change)="onCheckExibirInativoAgrupadora($event)">
+            <label class="form-check-label" style="font-size:14px;color:#3E67B1;" for="exibirAnexoInativoAgrupadora">Exibir Anexos Inativos</label>
+          </div>
+        </div>
+        <div class="col-sm-6 informacao">
+        </div>
+        <div class="col-sm-2 informacao">
+          <button *ngIf="canAccess('incluir') && exibirOpcaoManutencao()" type="button" class="btn btn-primary btn-fieldset" (click)="novaObservacao()">Incluir</button>
+        </div>
+      </div>
+
+      <div *ngIf="data && data.length > 0">
+          <siconv-table
+          [data]="data"
+          [fileExportName]="tituloListaObsMedicaoAtual"
+          [export]="export"
+          [pagination]="true"
+          (listaPaginada)="getListaPaginada($event, false)">
+              <thead header>
+                  <tr>
+                      <th sortable-column="dtRegistro" sortable-type="date" scope="col" colspan="2">Data</th>
+                      <th sortable-column="descricao" sortable-type="string" scope="col">Perfil</th>
+                      <th sortable-column="nomeResponsavel" sortable-type="string" scope="col">Responsável</th>
+                      <th sortable-column="txObservacao" sortable-type="string" scope="col">Descrição</th>
+                      <th colspan="2" scope="col" >Anexos</th>
+                      <th *ngIf="exibirOpcaoManutencao()" scope="col">Ações</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let obs of lista, let indice = index">
+                      <td style="width: 20px;" class="coluna-alinhada-top">
+                          <div *ngIf="obs.txObservacao.length > 100 || exibirExpansivelParaAnexosObs(obs, exibirFiltroAnexoAgrupadora)">
+                              <siconv-toggle id=indice title="Expandir/Contrair" [source]="obs"  (expanded)="expandedObs(indice, false)" ></siconv-toggle>
+                          </div>
+                      </td>
+                      <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(obs)" > {{ obs.dtRegistro | date : 'dd/MM/yyyy' }} </td>
+                      <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(obs)" > {{ obs.inPerfilResponsavel.descricao }} </td>
+                      <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(obs)" > {{ obs.nomeResponsavel }} </td>
+                      <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(obs)" >
+                          <div *ngIf="!obs.showDetail"> {{ obs.txObservacao | objeto }} </div>
+                          <div *ngIf="obs.showDetail"> {{ obs.txObservacao }} </div>
+                      </td>
+                      <td class="coluna-alinhada-top no-padding-right" style="width: 5%;">
+                          <div *ngIf="obs.showDetail" >
+                            <div *ngFor="let anexo of obs.anexos|filtroAnexos:exibirFiltroAnexoAgrupadora">
+                                <!-- Habilita e Desabilita o ícone do ativa/inativar anexo -->
+                                <a *ngIf="permiteAtivarInativarAnexo(obs) && anexo.inInativo === false && !isParentDetail()" title="Inativar Anexo" (click)="prepararInativacaoAnexo(modalConfirmacaoInativacaoAnexo, obs.id, anexo.id, null)" ><em class="fas fa-unlock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                                <a *ngIf="permiteAtivarInativarAnexo(obs) && anexo.inInativo && !isParentDetail() && exibirFiltroAnexoAgrupadora" title="Ativar Anexo" (click)="prepararAtivacaoAnexo(modalConfirmacaoAtivacaoAnexo, obs.id, anexo.id, null)" ><em class="fas fa-lock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                                &nbsp;
+                                <a *ngIf="anexo.inInativo === false" title="Download" [href]="anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                                <a *ngIf="anexo.inInativo && exibirFiltroAnexoAgrupadora" title="Download" [href]="obs.anexos[0].url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                            </div>
+                          </div>
+                          <div *ngIf="(obs.anexos|filtroAnexos:exibirFiltroAnexoAgrupadora).length > 0 && !obs.showDetail">
+                            <div *ngIf="{ anexo: (obs.anexos|filtroAnexos:exibirFiltroAnexoAgrupadora)[0] } as variable" >
+                                <!-- Habilita e Desabilita o ícone do ativa/inativar anexo -->
+                                <div>
+                                  <a *ngIf="permiteAtivarInativarAnexo(obs) && variable.anexo.inInativo === false && !isParentDetail()" title="Inativar Anexo" (click)="prepararInativacaoAnexo(modalConfirmacaoInativacaoAnexo, obs.id, variable.anexo.id, null)"><em class="fas fa-unlock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                                  <a *ngIf="permiteAtivarInativarAnexo(obs) && variable.anexo.inInativo && exibirFiltroAnexoAgrupadora && !isParentDetail()" title="Ativar Anexo" (click)="prepararAtivacaoAnexo(modalConfirmacaoAtivacaoAnexo, obs.id, variable.anexo.id, null)"><em class="fas fa-lock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                                  &nbsp;
+                                  <a *ngIf="variable.anexo.inInativo === false" title="Download" [href]="variable.anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                                  <a *ngIf="variable.anexo.inInativo && exibirFiltroAnexoAgrupadora" title="Download" [href]="variable.anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                                </div>
+                            </div>
+                          </div>
+                      </td>
+                      <td class="coluna-alinhada-top no-padding-left">
+                        <div *ngIf="obs.showDetail" >
+                          <div *ngFor="let anexo of obs.anexos|filtroAnexos:exibirFiltroAnexoAgrupadora" (click)="expandCollapseClickOutsideIcon(obs)">
+                            <!-- Deixa o nome do arquivo tachado -->
+                            <a *ngIf="anexo.inInativo && exibirFiltroAnexoAgrupadora"
+                                tooltip = "Inativado por {{anexo.nomeCpfInativo}}">
+                                <del *ngIf="anexo.inInativo === true"  style="color: gray" >{{ anexo.nmArquivo }}</del>
+                            </a>
+                            <a *ngIf="anexo.inInativo === false" >{{ anexo.nmArquivo }}</a>
+                          </div>
+                        </div>
+                        <div *ngIf="(obs.anexos|filtroAnexos:exibirFiltroAnexoAgrupadora).length > 0 && !obs.showDetail">
+                          <div *ngIf="{ anexo: (obs.anexos|filtroAnexos:exibirFiltroAnexoAgrupadora)[0] } as variable" (click)="expandCollapseClickOutsideIcon(obs)">
+                            <!-- Deixa o nome do arquivo tachado -->
+                            <a *ngIf="variable.anexo.inInativo && exibirFiltroAnexoAgrupadora"
+                                tooltip = "Inativado por {{variable.anexo.nomeCpfInativo}}" >
+                                <del *ngIf="variable.anexo.inInativo === true" style="color: gray" >{{ variable.anexo.nmArquivo }}</del>
+                            </a>
+                            <a *ngIf="variable.anexo.inInativo === false" >{{ variable.anexo.nmArquivo }}</a>
+                          </div>
+                        </div>
+                    </td>
+                    <td *ngIf="exibirOpcaoManutencao()" class="coluna-alinhada-top">
+                        <div>
+                            <a title="Editar" *ngIf="isUsuarioComPerfilEdicao(obs) && !obs.inBloqueio" (click)="exibirEdicao(obs.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                                <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                            </a>
+                            <a title="Editar" *ngIf="isUsuarioComPerfilEdicao(obs) && obs.inBloqueio" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                                <i class="fas fa-pencil-alt md-icone-inativo" tooltip="Observação bloqueada para edição" placement="left" aria-hidden="true"></i>
+                            </a>
+                            <a title="Excluir" *ngIf="isUsuarioComPerfilExclusao(obs) && !obs.inBloqueio" (click)="prepararExclusao(modalConfirmacaoExcluir, obs.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                                <i class="fas fa-trash-alt md-icone" aria-hidden="true"></i>
+                            </a>
+                            <a title="Excluir" *ngIf="isUsuarioComPerfilExclusao(obs) && obs.inBloqueio" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                                <i class="fas fa-trash-alt md-icone-inativo" tooltip="Observação bloqueada para exclusão" placement="left" aria-hidden="true"></i>
+                            </a>
+                          </div>
+                      </td>
+                  </tr>
+              </tbody>
+          </siconv-table>
+      </div>
+      <div *ngIf="data && data.length == 0">
+        Nenhum Registro Encontrado.
+      </div>
+      <ng-template #modalConfirmacaoExcluir>
+        <div class="close">
+          <a class="fa fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Exclusão da Observação</h4>
+        </div>
+        <div class="modal-body">
+          <p>Deseja confirmar a <strong>exclusão</strong> da Observação?</p>
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarExclusao()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarExclusao()">Sim</button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #modalConfirmacaoInativacaoAnexo>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoInativacaoAnexoRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Inativação de Anexo</h4>
+        </div>
+        <div class="modal-body">
+            <p>Deseja confirmar a <strong>inativação</strong> do Anexo ?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarInativacaoAnexo()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarInativacaoAnexo()">Sim</button>
+            </div>
+        </div>
+      </ng-template>
+
+      <ng-template #modalConfirmacaoAtivacaoAnexo>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoAtivacaoAnexoRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Ativação de Anexo</h4>
+        </div>
+        <div class="modal-body">
+            <p>Deseja confirmar a <strong>ativação</strong> do Anexo ?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarAtivacaoAnexo()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarAtivacaoAnexo()">Sim</button>
+            </div>
+        </div>
+      </ng-template>
+  </siconv-fieldset>
+  <siconv-fieldset *ngIf="medicao?.isMedicaoAgrupadora" fieldsetTitle="{{tituloListaObsMedicoesAgrupadas}}">
+    <div *ngIf="dataObservacoesMedicoesAgrupadas && dataObservacoesMedicoesAgrupadas.length > 0" class="form-check move-left">
+      <input class="form-check-input" type="checkbox" id="exibirAnexoInativoAgrupada" value="false" (change)="onCheckExibirInativoAgrupada($event)">
+      <label class="form-check-label" style="font-size:14px;color:#3E67B1;" for="exibirAnexoInativoAgrupada">Exibir Anexos Inativos</label>
+    </div>
+    <div *ngIf="dataObservacoesMedicoesAgrupadas && dataObservacoesMedicoesAgrupadas.length > 0">
+          <siconv-table
+          [data]="dataObservacoesMedicoesAgrupadas"
+          [fileExportName]="tituloListaObsMedicoesAgrupadas"
+          [export]="exportObsMedicoesAgrupadas"
+          [pagination]="true"
+          (listaPaginada)="getListaPaginada($event, true)">
+              <thead header>
+                  <tr>
+                      <th sortable-column="dtRegistro" sortable-type="date" scope="col" colspan="2">Data</th>
+                      <th sortable-column="inPerfilResponsavel.descricao" sortable-type="string" scope="col">Perfil</th>
+                      <th sortable-column="sequencialMedicaoAgrupada" sortable-type="string" scope="col">Medição</th>
+                      <th sortable-column="nomeResponsavel" sortable-type="string" scope="col">Responsável</th>
+                      <th sortable-column="txObservacao" sortable-type="string" scope="col">Descrição</th>
+                      <th colspan="2" scope="col">Anexos</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let obsMedicaoAgrupada of listaObservacoesMedicoesAgrupadas, let indiceAgrupada = index">
+                      <td style="width: 20px;" class="coluna-alinhada-top">
+                          <div *ngIf="obsMedicaoAgrupada.txObservacao.length > 100 || exibirExpansivelParaAnexosObs(obsMedicaoAgrupada, exibirFiltroAnexoAgrupada)">
+                              <siconv-toggle title="Expandir/Contrair" [source]="obsMedicaoAgrupada" (expanded)="expandedObs(indiceAgrupada, true)"></siconv-toggle>
+                          </div>
+                      </td>
+                      <td (click)="expandCollapseClickOutsideIcon(obsMedicaoAgrupada)" class="coluna-alinhada-top"> {{ obsMedicaoAgrupada.dtRegistro | date : 'dd/MM/yyyy' }} </td>
+                      <td (click)="expandCollapseClickOutsideIcon(obsMedicaoAgrupada)" class="coluna-alinhada-top"> {{ obsMedicaoAgrupada.inPerfilResponsavel?.descricao }} </td>
+                      <td (click)="expandCollapseClickOutsideIcon(obsMedicaoAgrupada)" class="coluna-alinhada-top"> {{ obsMedicaoAgrupada.sequencialMedicaoAgrupada }} </td>
+                      <td (click)="expandCollapseClickOutsideIcon(obsMedicaoAgrupada)" class="coluna-alinhada-top"> {{ obsMedicaoAgrupada.nomeResponsavel }} </td>
+                      <td (click)="expandCollapseClickOutsideIcon(obsMedicaoAgrupada)" class="coluna-alinhada-top">
+                          <div *ngIf="!obsMedicaoAgrupada.showDetail"> {{ obsMedicaoAgrupada.txObservacao | objeto }} </div>
+                          <div *ngIf="obsMedicaoAgrupada.showDetail"> {{ obsMedicaoAgrupada.txObservacao }} </div>
+                      </td>
+                      <td class="coluna-alinhada-top no-padding-right" style="width: 5%;" >
+                        <div *ngIf="obsMedicaoAgrupada.showDetail">
+                          <div *ngFor="let anexo of obsMedicaoAgrupada.anexos|filtroAnexos:exibirFiltroAnexoAgrupada">
+                              <!-- Habilita e Desabilita o ícone do ativa/inativar anexo -->
+                              <a *ngIf="permiteAtivarInativarAnexo(obsMedicaoAgrupada) && anexo.inInativo === false && !isParentDetail()" title="Inativar Anexo" (click)="prepararInativacaoAnexo(modalConfirmacaoInativacaoAnexo, obsMedicaoAgrupada.id, anexo.id, obsMedicaoAgrupada.medicaoFk)"><em class="fas fa-unlock" style="font-size:18px;color:#3E67B1; cursor:pointer; "></em></a>
+                              <a *ngIf="permiteAtivarInativarAnexo(obsMedicaoAgrupada) && anexo.inInativo && !isParentDetail() && exibirFiltroAnexoAgrupada" title="Ativar Anexo" (click)="prepararAtivacaoAnexo(modalConfirmacaoAtivacaoAnexo, obsMedicaoAgrupada.id, anexo.id, obsMedicaoAgrupada.medicaoFk)"><em class="fas fa-lock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                              &nbsp;
+                              <a *ngIf="anexo.inInativo === false" title="Download" [href]="anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                              <a *ngIf="anexo.inInativo && exibirFiltroAnexoAgrupada" title="Download" [href]="anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                          </div>
+                        </div>
+                        <div *ngIf="(obsMedicaoAgrupada.anexos|filtroAnexos:exibirFiltroAnexoAgrupada).length > 0 && !obsMedicaoAgrupada.showDetail">
+                          <div *ngIf="{ anexo: (obsMedicaoAgrupada.anexos|filtroAnexos:exibirFiltroAnexoAgrupada)[0] } as variable">
+                            <!-- Habilita e Desabilita o ícone do ativa/inativar anexo -->
+                               <a *ngIf="permiteAtivarInativarAnexo(obsMedicaoAgrupada) && variable.anexo.inInativo === false && !isParentDetail()" title="Inativar Anexo" (click)="prepararInativacaoAnexo(modalConfirmacaoInativacaoAnexo, obsMedicaoAgrupada.id, variable.anexo.id, obsMedicaoAgrupada.medicaoFk)"><em class="fas fa-unlock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                              <a *ngIf="permiteAtivarInativarAnexo(obsMedicaoAgrupada) && variable.anexo.inInativo && !isParentDetail() && exibirFiltroAnexoAgrupada" title="Ativar Anexo" (click)="prepararAtivacaoAnexo(modalConfirmacaoAtivacaoAnexo, obsMedicaoAgrupada.id, variable.anexo.id, obsMedicaoAgrupada.medicaoFk)"><em class="fas fa-lock" style="font-size:18px;color:#3E67B1; cursor:pointer;"></em></a>
+                              &nbsp;
+                              <a *ngIf="variable.anexo.inInativo === false" title="Download" [href]="variable.anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                              <a *ngIf="variable.anexo.inInativo && exibirFiltroAnexoAgrupada" title="Download" [href]="variable.anexo.url"><em class="fa fa-download" style="font-size:18px;color:#3E67B1;"></em></a>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td (click)="expandCollapseClickOutsideIcon(obsMedicaoAgrupada)" class="coluna-alinhada-top no-padding-left " style="border: 20px;">
+                        <div *ngIf="obsMedicaoAgrupada.showDetail">
+                            <div *ngFor="let anexo of obsMedicaoAgrupada.anexos|filtroAnexos:exibirFiltroAnexoAgrupada">
+                                 <!--Deixa o nome do arquivo tachado -->
+                                 <a *ngIf="anexo.inInativo && exibirFiltroAnexoAgrupada"
+                                      tooltip = "Inativado por {{anexo.nomeCpfInativo}}">
+                                      <del *ngIf="anexo.inInativo === true"  style="color: gray">{{ anexo.nmArquivo }}</del>
+                                  </a>
+                                  <a *ngIf="anexo.inInativo === false">{{ anexo.nmArquivo }}</a>
+                            </div>
+                        </div>
+                        <div *ngIf="(obsMedicaoAgrupada.anexos|filtroAnexos:exibirFiltroAnexoAgrupada).length > 0 && !obsMedicaoAgrupada.showDetail">
+                          <div *ngIf="{ anexo: (obsMedicaoAgrupada.anexos|filtroAnexos:exibirFiltroAnexoAgrupada)[0] } as variable">
+                            <!-- Deixa o nome do arquivo tachado -->
+                            <a *ngIf="variable.anexo.inInativo && exibirFiltroAnexoAgrupada"
+                                  tooltip = "Inativado por {{variable.anexo.nomeCpfInativo}}" >
+                                  <del *ngIf="variable.anexo.inInativo === true"  style="color: gray">{{ variable.anexo.nmArquivo }}</del>
+                            </a>
+                            <a *ngIf="variable.anexo.inInativo === false">{{ variable.anexo.nmArquivo }}</a>
+                          </div>
+                        </div>
+                      </td>
+
+                  </tr>
+              </tbody>
+          </siconv-table>
+      </div>
+      <div *ngIf="dataObservacoesMedicoesAgrupadas && dataObservacoesMedicoesAgrupadas.length == 0">
+        Nenhum Registro Encontrado.
+      </div>
+
+      <ng-template #modalConfirmacaoInativacaoAnexo>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoInativacaoAnexoRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Inativação de Anexo</h4>
+        </div>
+        <div class="modal-body">
+            <p>Deseja confirmar a <strong>inativação</strong> do Anexo ?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarInativacaoAnexo()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarInativacaoAnexo()">Sim</button>
+            </div>
+        </div>
+      </ng-template>
+
+      <ng-template #modalConfirmacaoAtivacaoAnexo>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoAtivacaoAnexoRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Ativação de Anexo</h4>
+        </div>
+        <div class="modal-body">
+            <p>Deseja confirmar a <strong>ativação</strong> do Anexo ?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarAtivacaoAnexo()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarAtivacaoAnexo()">Sim</button>
+            </div>
+        </div>
+      </ng-template>
+  </siconv-fieldset>
+  <footer class="footer-botoes">
+    <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)='voltar()' >Voltar</button>
+  </footer>
+</siconv-tab>
+</siconv-tab-set>

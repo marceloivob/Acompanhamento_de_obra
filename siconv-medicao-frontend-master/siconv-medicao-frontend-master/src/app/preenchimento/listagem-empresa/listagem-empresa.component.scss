@@ -1,0 +1,36 @@
+.info-empresa {
+    display: flex;
+    flex-direction: row;
+    padding: 20px 20px 20px 40px;
+    box-shadow: none !important;
+}
+
+.nome-empresa {
+    font-size: 15px;
+    color: #0a6aa6;
+    padding-left: 10px;
+}
+
+.contrato-empresa {
+    font-size: 14px;
+    color: #B5571C;
+    padding-left: 10px;
+}
+
+.empresa {
+    cursor: pointer;
+    //height: 100%;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: -1px -1px 2px #d3d3d3;
+    transition:all 0.3s ease-out;
+    margin: 0 0 20 20;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.empresa:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 5px #666666 ;
+    transition:all 0.3s ease-out;
+}

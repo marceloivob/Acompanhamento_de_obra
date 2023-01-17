@@ -1,0 +1,99 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: ${DB_USER_MEDICAO}
+    password: ${DB_PASSWORD_MEDICAO}
+    jdbc:
+      url: ${DB_URL_CONNECTION_MEDICAO}
+      max-size: 10
+    health:
+      enabled: false
+    metrics:
+        enabled: true
+  log:
+    level: INFO
+  banner:
+    path: banner.ascii
+  smallrye-openapi:
+    enable: false
+  smallrye-health:
+    root-path: /health
+    liveness-path: /health/live
+    readiness-path: /health/ready
+  smallrye-metrics:
+    path: /metrics
+    jaxrs:
+      enabled: true
+  s3:
+    endpoint-override: https://storagegw.estaleiro.serpro.gov.br
+    aws:
+      region: us-east-1
+      credentials:
+        type: static
+        static-provider:
+          access-key-id: ${CEPH_ACCESS_TOKEN_MEDICAO}
+          secret-access-key: ${CEPH_SECRET_KEY_MEDICAO}
+
+sentry:
+  ~: true
+  dsn: ${SENTRY_DSN_BACKEND_MEDICAO}
+  environment: ${SICONV_STAGE}
+  level: ERROR
+  in-app-packages: br.gov
+
+medicao:
+  rest:
+    showErrorStackTrace: false
+
+integrations:
+  PUBLIC:
+    IDP:
+      endpoint: ${URL_IDP}
+    SICONV:
+      endpoint: ${URL_SICONV}
+
+publickey:
+  jwt:
+    idp: ${JWT_PUBLIC_KEY}
+
+maisbrasil:
+  cadastro:
+    grpc:
+      url: ${MAISBRASIL_CADASTRO_GRPC_URL}
+      port: ${MAISBRASIL_CADASTRO_GRPC_PORT}
+  autoriza:
+    jwt:
+      secret:
+        base64: ${MAISBRASIL_AUTORIZA_JWT_SECRET_BASE64}
+      token-validity-in-seconds: ${MAISBRASIL_AUTORIZA_JWT_TOKEN_VALID_IN_SECONDS_MEDICAO}
+    govbr:
+      url-provider: ${MAISBRASIL_AUTORIZA_GOVBR_URL_PROVIDER}
+      url-servicos: ${MAISBRASIL_AUTORIZA_GOVBR_URL_SERVICOS}
+      client-id: ${MAISBRASIL_AUTORIZA_GOVBR_CLIENT_ID}
+      client-secret: ${MAISBRASIL_AUTORIZA_GOVBR_CLIENT_SECRET}
+    use-proxy: ${MAISBRASIL_AUTORIZA_USE_PROXY}
+    proxy:
+      hostname: ${PROXY_AUTH_HOSTNAME}
+      port: ${PROXY_AUTH_PORT}
+      username: ${PROXY_AUTH_USERNAME}
+      password: ${PROXY_AUTH_PASSWORD}
+
+siconv:
+  grpc:
+    host: ${SICONV_GRPC_HOST_MEDICAO}
+    port: ${SICONV_GRPC_PORT_MEDICAO}
+
+contratos:
+  grpc:
+    host: ${CONTRATOS_GRPC_HOST}
+    port: ${CONTRATOS_GRPC_PORT}
+
+vrpl:
+  grpc:
+    host: ${VRPL_GRPC_HOST}
+    port: ${VRPL_GRPC_PORT}
+
+projeto_basico:
+  grpc:
+    host: ${PROJETO_BASICO_GRPC_HOST}
+    port: ${PROJETO_BASICO_GRPC_PORT}

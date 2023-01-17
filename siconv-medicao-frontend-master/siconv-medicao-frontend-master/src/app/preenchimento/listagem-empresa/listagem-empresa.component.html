@@ -1,0 +1,16 @@
+<div class="conteudo-corpo">
+    <div class="empresa" *ngFor="let emp of empresas, let indice = index" (click)="selecionarEmpresa(emp.id)">
+        <div class="info-empresa">
+            <img src="assets/img/building-regular.png" alt="Prédio" width="30" height="40" />
+            <div>
+                <div class="nome-empresa">
+                    {{ emp.razaoSocial }} - {{ emp.cnpj | cnpj }}
+                </div>
+                <div class="contrato-empresa">
+                    {{ emp.qtdContratos}} {{ emp.qtdContratos > 1 ? 'contratos ' :
+                    'contrato' }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

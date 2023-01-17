@@ -1,0 +1,149 @@
+<siconv-tab-set class="tab-customizada">
+
+  <siconv-tab name="Responsável Técnico" (activeChange)='navegarAbaResponsavelTecnico()'></siconv-tab>
+
+  <siconv-tab name="ART / RRT" *ngIf="!contrato.inSocial" (activeChange)='navegarAbaARTRRT()' hint="Anotação / Registro de Responsabilidade Técnica"></siconv-tab>
+
+  <siconv-tab name="Documentação Complementar" [active]='true'>
+
+    <siconv-fieldset fieldsetTitle="Documentação Complementar">
+
+        <button *ngIf="canAccess('incluir')" type="button" class="btn btn-primary btn-fieldset" (click)="incluir()" >Incluir</button>
+
+        <siconv-table
+          [data]="data"
+          [fileExportName]="fileExportName"
+          [export]="export"
+          [pagination]="true"
+          (listaPaginada)="getListaPaginada($event)">
+          <thead header>
+              <tr>
+                <th sortable-column="_descricaoTipoDocumento" sortable-type="string" scope="col" colspan="2">Tipo de Documento</th>
+                <th sortable-column="_descricaoManifestoAmbiental" sortable-type="string" scope="col">Tipo Manifesto Ambiental</th>
+                <th sortable-column="nmOrgaoEmissor" sortable-type="string" scope="col">Órgão Emissor</th>
+                <th sortable-column="dtEmissao" sortable-type="date" scope="col">Data de Emissão</th>
+                <th sortable-column="dtValidade" sortable-type="date" scope="col">Válido Até</th>
+                <th scope="col">Submetas</th>
+                <th sortable-column="nmArquivo" sortable-type="string" scope="col" colspan="2">Arquivo</th>
+                <th scope="col">Ações</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let docscompl of lista, let indice = index">
+                    <td style="width: 2px;" class="coluna-alinhada-top">
+                      <div *ngIf="docscompl.submetas && docscompl.submetas.length > 1">
+                          <siconv-toggle [source]="docscompl" title="Expandir/Contrair" (expanded)="expandedItems(indice)" show="true"></siconv-toggle>
+                      </div>
+                    </td>
+                    <td (click)="expandCollapseClickOutsideIcon(docscompl)" class="coluna-alinhada-top"><i tooltip="O documento está bloqueado pois houve um ateste de uma medição deste CTEF após a inclusão do documento no sistema" *ngIf="docscompl.bloqueado " class="fas fa-lock" style="color:#3E67B1; padding-right: 3px;" aria-hidden="true"></i> {{ docscompl.tipoDocumento.descricao }}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(docscompl)" class="coluna-alinhada-top">{{ docscompl.tipoManifestoAmbiental ? docscompl.tipoManifestoAmbiental.descricao : '' }}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(docscompl)" class="coluna-alinhada-top">{{ docscompl.nmOrgaoEmissor }}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(docscompl)" class="coluna-alinhada-top">{{ docscompl.dtEmissao | date : 'dd/MM/yyyy' }}</td>
+                    <td (click)="expandCollapseClickOutsideIcon(docscompl)" class="coluna-alinhada-top">{{ docscompl.dtValidade ? (docscompl.dtValidade | date : 'dd/MM/yyyy') : '' }}</td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(docscompl)">
+                        <div *ngIf="docscompl.submetas && docscompl.submetas.length > 0">
+                            <div *ngIf="!docscompl.showDetail">{{docscompl.submetas[0].nrSubmetaAnalise}} - {{ docscompl.submetas[0].descricao }}</div>
+                            <div *ngIf="docscompl.showDetail">
+                                <div *ngFor="let submeta of docscompl.submetas">
+                                {{submeta.nrSubmetaAnalise}} - {{ submeta.descricao }}<br>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="coluna-alinhada-top no-padding-right">
+                      <div *ngIf="docscompl.nmArquivo">
+                          <a *ngIf="docscompl.url" title="Download" [href]="docscompl.url"><em class="fa fa-download md-icone"></em></a>
+                      </div>
+                    </td>
+                    <td class="coluna-alinhada-top no-padding-left" (click)="expandCollapseClickOutsideIcon(docscompl)">
+                      <div *ngIf="docscompl.nmArquivo">
+                          {{ docscompl.nmArquivo }}
+                      </div>
+                    </td>
+                    <td class="coluna-alinhada-top" style="width: 100px;">
+                        <a title="Detalhar" (click)="prepararDetalhamento(docscompl.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-search md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Editar" *ngIf="canAccess('editar') && permiteManutencao(docscompl)" (click)="prepararEdicao(docscompl.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Editar" *ngIf="canAccess('editar') && !permiteManutencao(docscompl)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                          <i tooltip="{{getTooltipEdicaoDesabilitada(docscompl)}}" placement = "left" class="fas fa-pencil-alt md-icone-inativo" aria-hidden="true"></i>
+                        </a>
+                        <a title="Excluir" *ngIf="canAccess('excluir') && permiteManutencao(docscompl)" (click)="prepararExclusao(modalConfirmacaoExcluir, docscompl.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-trash-alt md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Excluir" *ngIf="canAccess('excluir') && !permiteManutencao(docscompl)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                          <i tooltip="{{getTooltipExclusaoDesabilitada(docscompl)}}" placement = "left" class="fas fa-trash-alt md-icone-inativo" aria-hidden="true"></i>
+                      </a>
+                      <a title="Bloquear" *ngIf="canAccess('bloquear/desbloquear') && !docscompl.bloqueado" (click)="prepararBloqueio(modalConfirmacaoBloqueio, docscompl.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                        <i class="fas fa-lock md-icone" aria-hidden="true"></i>
+                      </a>
+                      <a title="Desbloquear" *ngIf="canAccess('bloquear/desbloquear') && docscompl.bloqueado" (click)="prepararDesbloqueio(modalConfirmacaoDesbloqueio, docscompl.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                        <i class="fas fa-unlock md-icone" aria-hidden="true"></i>
+                      </a>
+                    </td>
+              </tr>
+          </tbody>
+        </siconv-table>
+
+
+        <ng-template #modalConfirmacaoExcluir>
+          <div class="close">
+              <a class="fa fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+          </div>
+          <div class="modal-header">
+              <h4 class="modal-title pull-left">Exclusão de Documentação Complementar</h4>
+          </div>
+          <div class="modal-body">
+              <p>Documento Complementar será <strong>excluído</strong>. Deseja prosseguir?</p>
+              <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarExclusao()">Não</button>
+              <button type="button" class="btn btn-primary" (click)="confirmarExclusao()">Sim</button>
+              </div>
+          </div>
+        </ng-template>
+
+        <ng-template #modalConfirmacaoBloqueio>
+          <div class="close">
+              <a class="fa fa-times" (click)="modalConfirmacaoBloquearRef.hide()"></a>
+          </div>
+          <div class="modal-header">
+              <h4 class="modal-title pull-left">Bloqueio de Documentação Complementar</h4>
+          </div>
+          <div class="modal-body">
+              <p>Documento Complementar será <strong>bloqueado</strong>. Deseja prosseguir?</p>
+              <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarBloqueioDesbloqueio(true)">Não</button>
+              <button type="button" class="btn btn-primary" (click)="confirmarBloqueioDesbloqueio(true)">Sim</button>
+              </div>
+          </div>
+        </ng-template>
+
+        <ng-template #modalConfirmacaoDesbloqueio>
+          <div class="close">
+              <a class="fa fa-times" (click)="modalConfirmacaoDesbloquearRef.hide()"></a>
+          </div>
+          <div class="modal-header">
+              <h4 class="modal-title pull-left">Desbloqueio de Documentação Complementar</h4>
+          </div>
+          <div class="modal-body">
+              <p>Documento Complementar será <strong>desbloqueado</strong>. Deseja prosseguir?</p>
+              <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarBloqueioDesbloqueio(false)">Não</button>
+              <button type="button" class="btn btn-primary" (click)="confirmarBloqueioDesbloqueio(false)">Sim</button>
+              </div>
+          </div>
+        </ng-template>
+
+    </siconv-fieldset>
+
+  </siconv-tab>
+
+  <siconv-tab name="Paralisação de Obra" (activeChange)='navegarAbaParalisacao()'></siconv-tab>
+
+</siconv-tab-set>
+
+<footer class="footer-botoes">
+  <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+</footer>

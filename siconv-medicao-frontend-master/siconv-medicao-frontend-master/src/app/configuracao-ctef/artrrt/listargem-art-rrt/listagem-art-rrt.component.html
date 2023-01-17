@@ -1,0 +1,132 @@
+ <siconv-tab-set class="tab-customizada">
+
+  <siconv-tab name="Responsável Técnico" (activeChange)='navegarAbaRT()' ></siconv-tab>
+
+  <siconv-tab name="ART / RRT" [active]='true' hint="Anotação / Registro de Responsabilidade Técnica">
+
+    <siconv-fieldset fieldsetTitle="Anotação / Registro de Responsabilidade Técnica">
+      <button type="button" class="btn btn-primary btn-fieldset" (click)="incluir()" *ngIf="canAccess('incluir')">Incluir</button>
+
+        <siconv-table
+          [data]="data"
+          [fileExportName]="fileExportName"
+          [export]="export"
+          [pagination]="true"
+          (listaPaginada)="getListaPaginada($event)"
+          >
+          <thead header>
+              <tr>
+                <th sortable-column="descricaoTipo" sortable-type="string" scope="col" colspan="2">Tipo</th>
+                <th sortable-column="numero" sortable-type="string" scope="col">ART / RRT</th>
+                <th sortable-column="dataEmissao" sortable-type="date" scope="col">Data de Emissão</th>
+                <th sortable-column="nomeResponsavelTecnico" sortable-type="string" scope="col">Responsável Técnico</th>
+                <th scope="col">Submetas</th>
+                <th sortable-column="dataInativacao" sortable-type="string" scope="col">Data de Inativação</th>
+                <th sortable-column="nmArquivo" colspan="2" sortable-type="string" scope="col">Arquivo</th>
+                <th scope="col">Ações</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let art of lista, let indice = index">
+                    <td style="width: 20px;" class="coluna-alinhada-top">
+                      <div *ngIf="art.submetas && art.submetas.length > 1">
+                          <siconv-toggle [source]="art" title="Expandir/Contrair" (expanded)="expandedItems(indice)" show="true"></siconv-toggle>
+                        </div>
+                    </td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(art)">{{ art.descricaoTipo | titlecase }}</td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(art)">{{ art.numero }}</td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(art)">{{ art.dataEmissao | date : 'dd/MM/yyyy' }}</td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(art)">{{ art.nomeResponsavelTecnico | titlecase }}</td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(art)">
+                        <div *ngIf="art.submetas && art.submetas.length > 0">
+                            <div *ngIf="!art.showDetail">{{art.submetas[0].nrSubmetaAnalise}} - {{ art.submetas[0].descricao }}</div>
+                            <div *ngIf="art.showDetail">
+                                <div *ngFor="let submeta of art.submetas">
+                                {{submeta.nrSubmetaAnalise}} - {{ submeta.descricao }}<br>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="coluna-alinhada-top" (click)="expandCollapseClickOutsideIcon(art)">{{ art.dataInativacao | date : 'dd/MM/yyyy' }}</td>
+                    <td class="coluna-alinhada-top no-padding-right">
+                      <div *ngIf="art.nmArquivo">
+                        <a *ngIf="art.url" title="Download" [href]="art.url"><em class="fa fa-download md-icone"></em></a>
+                      </div>
+                    </td>
+                    <td class="coluna-alinhada-top no-padding-left" (click)="expandCollapseClickOutsideIcon(art)">
+                        <div *ngIf="art.nmArquivo">
+                            {{ art.nmArquivo }}
+                        </div>
+                    </td>
+                    <td class="coluna-alinhada-top" style="width: 100px;">
+                        <a title="Detalhar" (click)="prepararDetalhamento(art.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-search md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Editar" *ngIf="canAccess('editar') && !art.dataInativacao && !art.possuiSubmetaAssinada" (click)="prepararEdicao(art.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-pencil-alt md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Editar" *ngIf="canAccess('editar') && (art.dataInativacao || art.possuiSubmetaAssinada)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i data-placement="left" tooltip="{{getMotivoSemPermissaoEdicao(art.dataInativacao, art.possuiSubmetaAssinada)}}" class="fas fa-pencil-alt md-icone-inativo" aria-hidden="true"></i>
+                        </a>
+                        <!-- Início de Inativar -->
+                        <a title="Inativar" *ngIf="canAccess('inativar') && !art.dataInativacao" (click)="prepararInativacao(modalConfirmacaoInativar, art.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-user-slash md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a *ngIf="canAccess('inativar') && art.dataInativacao" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i data-placement="left" tooltip="{{getMotivoSemPermissaoInativacao(art)}}" class="fas fa-user-slash md-icone-inativo" aria-hidden="true"></i>
+                        </a>
+                        <!-- Fim de Inativar -->
+                        <a title="Excluir" *ngIf="canAccess('excluir') && !art.possuiSubmetaAssinada" (click)="prepararExclusao(modalConfirmacaoExcluir, art.id)" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i class="fas fa-trash-alt md-icone" aria-hidden="true"></i>
+                        </a>
+                        <a title="Excluir" *ngIf="canAccess('excluir') && art.possuiSubmetaAssinada" style="min-width: 20px; display: inline-block; padding-right: 2px">
+                            <i data-placement="left" tooltip="{{getMotivoSemPermissaoExclusao()}}" class="fas fa-trash-alt md-icone-inativo" aria-hidden="true"></i>
+                        </a>
+                    </td>
+              </tr>
+          </tbody>
+        </siconv-table>
+
+        <ng-template #modalConfirmacaoExcluir>
+        <div class="close">
+            <a class="fa fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Exclusão de ART / RRT</h4>
+        </div>
+        <div class="modal-body">
+            <p>ART / RRT será <strong>excluído</strong>. Deseja prosseguir?</p>
+            <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarExclusao()">Não</button>
+            <button type="button" class="btn btn-primary" (click)="confirmarExclusao()">Sim</button>
+            </div>
+        </div>
+        </ng-template>
+        <ng-template #modalConfirmacaoInativar>
+          <div class="close">
+              <a class="fa fa-times" (click)="modalConfirmacaoInativarRef.hide()"></a>
+          </div>
+          <div class="modal-header">
+              <h4 class="modal-title pull-left">Inativação de ART / RRT</h4>
+          </div>
+          <div class="modal-body">
+              <p>A Anotação/Registro de Responsabilidade Técnica será <strong>inativada</strong>. Deseja prosseguir?</p>
+              <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" style="margin-right: 0.2em;" (click)="cancelarInativacao()">Não</button>
+              <button type="button" class="btn btn-primary" (click)="confirmarInativacao()">Sim</button>
+              </div>
+          </div>
+        </ng-template>
+
+    </siconv-fieldset>
+  </siconv-tab>
+
+  <siconv-tab name="Documentação Complementar" (activeChange)='navegarAbaDocComplementar()' ></siconv-tab>
+
+  <siconv-tab name="Paralisação de Obra" (activeChange)='navegarAbaParalisacao()'></siconv-tab>
+
+</siconv-tab-set>
+
+<footer class="footer-botoes">
+  <button type="button" class="btn btn-primary" style="margin-left: 20px; margin-right: 5px;" (click)="voltar()">Voltar</button>
+</footer>

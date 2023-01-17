@@ -1,0 +1,1 @@
+web: java -Xmx512m -XX:MaxMetaspaceSize=256m -XX:ParallelGCThreads=4 -XX:NewRatio=2 -XX:SurvivorRatio=20 -XX:+UseGCOverheadLimit -XX:+ExitOnOutOfMemoryError -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true -Dquarkus.profile=${EST_SYSTEM}-${EST_ENVIRONMENT} -jar quarkus-app/quarkus-run.jar

@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-sm-12">
+    <h3>Assinatura Responsável Técnico</h3>
+  </div>
+</div>
+
+<siconv-table
+[data]="assinaturas">
+    <thead header>
+        <tr>
+          <th scope="col">CPF</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Perfil</th>
+          <th scope="col" *ngIf="exibirColunaCREA">CREA/CAU</th>
+          <th scope="col">Data da Assinatura</th>
+        </tr>
+      </thead>
+      <tbody>
+          <ng-container *ngFor="let assinatura of assinaturas">
+            <tr>
+              <td class="colunaCPF">{{assinatura.responsavel.nrCpf | cpf}}</td>
+              <td>{{assinatura.responsavel.nome}}</td>
+              <td>{{assinatura.responsavel.perfil}}</td>
+              <td *ngIf="exibirColunaCREA">{{assinatura.responsavel.nrCrea}}</td>
+              <td class="colunaDataAssinatura">{{assinatura.data | date: 'dd/MM/yyyy - HH:mm:ss'}}</td>
+            </tr>
+         </ng-container>
+      </tbody>
+</siconv-table>

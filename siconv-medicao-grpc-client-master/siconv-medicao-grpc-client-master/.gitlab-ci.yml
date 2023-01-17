@@ -1,0 +1,36 @@
+variables:
+  TOKEN: $TOKEN
+  MAVEN_OPTS: "-Dmaven.repo.local=/.m2"
+  GIT_SSL_NO_VERIFY: "true"
+
+stages:
+    - Build:Compilação
+    #- Build:Testes Unitários
+    #- Build:Análise de Qualidade de Código
+    - Estaleiro:Construção da Imagem
+    - Estaleiro:Deploy
+    - Estaleiro:Publicação DESENV
+
+Build:Compilação:
+  before_script:
+    - POM_VERSION=$(grep -m1 '<version>' pom.xml |cut -d '<' -f2  |cut -d '>' -f2)
+    - export VERSION=${POM_VERSION}-$CI_PIPELINE_ID-${CI_COMMIT_SHA:0:8}
+    - echo $CI_BUILD_ID
+    - echo $VERSION
+  image: hub.estaleiro.serpro/pipeline/maven:3-jdk-11-slim
+  stage: Build:Compilação
+  script:
+    - echo "Compilando..."
+    - pwd
+    - mvn clean package -X -B versions:set -DnewVersion=$VERSION
+    - ls
+    - cd target
+    - mv siconv.medicao-grpc-client-${POM_VERSION}-sources.jar siconv-medicao-grpc-client-$VERSION-sources.jar
+    - mv siconv.medicao-grpc-client-${POM_VERSION}.jar siconv-medicao-grpc-client-$VERSION.jar
+    - ls
+    - echo "Atualizando a versão do Projeto..."
+    - mvn -X deploy:deploy-file -Durl=https://nexus.aic.serpro.gov.br/repository/releases/ -Dfile=./siconv-medicao-grpc-client-$VERSION.jar -Dpackaging=jar -Dsources=./siconv-medicao-grpc-client-$VERSION-sources.jar -DgroupId=br.gov.serpro.siconv -DartifactId=siconv-medicao-grpc-client -Dversion=$VERSION
+  cache:
+    paths:
+        - /.m2
+  when: manual

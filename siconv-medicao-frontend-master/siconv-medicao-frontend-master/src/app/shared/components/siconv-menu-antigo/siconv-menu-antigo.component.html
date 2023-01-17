@@ -1,0 +1,86 @@
+<div *ngIf="menuLoaded | async">
+  <div id="menuSiconvContainer">
+      <div title="Portal dos Convênios do Governo Federal" id="banner_governo" style="align-content: center">
+        <table cellspacing="0" cellpadding="0" border="0" id="tabela" >
+            <tbody>
+                <tr valign="middle">
+                    <td width="100%" valign="middle">
+                        <div id="background">
+                            <img border="0" usemap="#cabecalho" alt="Portal dos Convênios do Governo Federal"
+                              src="assets/img/menu/bgHeader.jpg">
+                            <map name="cabecalho">
+                              <area href="http://www.acessoainformacao.gov.br/acessoainformacaogov/" coords="165,13,280,34" shape="rect">
+                            </map>
+                            <strong>
+                              <div
+                                style="position: absolute; top: 11px; left: 8px; color: #D3D3D3; font-size: 10px"
+                                id="tempoRestante">{{minutos}}:{{segundos | zeroEsquerdaMask}}</div>
+                            </strong>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+
+      <div id="header_menu">
+        <div style="position: absolute" id="logo">
+          <a id="lnkPrincipal" class="home" href={{menu.urlLinkLogo}}>
+            <img id="imgLogo" alt="Siconv" src="assets/img/logo-portal.png">
+            <span><img src="assets/img/menu/ico_home.gif">P&aacute;gina Principal</span>
+          </a>
+        </div>
+
+        <div id="userInterno">
+          <div *ngIf="menu.isUsuarioGuest; else usuarionaoguest" class="dado left">
+            <div class="user">
+            </div>
+            <div class="cpf">
+            </div>
+          </div>
+          <ng-template #usuarionaoguest>
+            <div class="dado left">
+              <div class="user">
+                <label id="lblUsuario">Usu&aacute;rio: </label><span id="infUserName">{{menu.nomeUsuario}}</span>
+              </div>
+              <div class="cpf">
+                <label id="lblCpf">CPF: </label><span id="infUserCPF">{{menu.identificacaoUsuario | cpf}}</span>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <div id="info">
+          <span class="data" style="margin-top: -1px;">
+            <span id="sistemaDataHoraAtual">{{ dthora | date: 'dd/MM/yy' }}</span>
+          </span>
+          <a id="lnkLogout" style="position: relative; top: -2px;" onmouseover="this.style.cursor='pointer'" (click)="(logoutUser())">
+            <span class="exit">
+              <span id="spnTextoSair">{{menu.textoLogout}}</span>&nbsp;<input type="button" value="" class="bt_exit"
+                style="position: relative; top: -2px;">
+            </span>
+          </a>
+        </div>
+
+        <div id="menuInterno">
+          <div class="col1">
+            <div *ngFor="let menuitem of menu.itensMenu" id={{menuitem.id}} (click)="clickMenu(menuitem.id)"
+              class="button menu">{{menuitem.label}}</div>
+          </div>
+          <br style="clear:both" />
+        </div>
+
+        <div id="contentMenuInterno">
+          <div *ngIf="menuSelecionado" class="border">
+            <h3 class="title">{{menuitemSelecionado.label}}</h3>
+            <div *ngFor="let col of itensMenuSelecionado" class="colM">
+              <ul>
+                <li *ngFor="let item of col"><a href={{item.action}}>{{item.label}}</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <br/>
+      </div>
+  </div>
+</div>

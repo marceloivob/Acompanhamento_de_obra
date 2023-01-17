@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Acompanhamento_de_obra">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/siconv-medicao-grpc-client-master.zip!/" />
+      <root url="jar://$PROJECT_DIR$/siconv-medicao-grpc-server-master.zip!/" />
+      <root url="jar://$PROJECT_DIR$/siconv-medicao-backend-master.zip!/" />
+      <root url="jar://$PROJECT_DIR$/siconv-medicao-frontend-master.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

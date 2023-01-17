@@ -1,0 +1,47 @@
+<siconv-fieldset fieldsetTitle="Contrato de Execução e/ou Fornecimento {{ contrato.numeroContrato }}"
+  [collapsible]="collapsible" [collapsed]="collapsed">
+
+  <div class="row">
+    <div class="col-sm-12 informacao">
+      <label class="titulo">Objeto</label>
+      <p class="informacao">
+        {{ contrato.nomeObjetoContratoFornecimento }}
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 informacao">
+      <label class="titulo" title="Valor total informado no instrumento contratual">Valor Total</label>
+      <p class="informacao">
+        {{ contrato.valorContrato | currency:'BRL' }}
+      </p>
+    </div>
+    <div class="col-sm-4 informacao">
+      <label class="titulo" title="Soma das submetas dos lotes que compõem esse instrumento contratual">Valor referente ao {{contrato.modalidade.descricao}}</label>
+      <p class="informacao">
+        {{ contrato.valorTipoInstrumento | currency:'BRL' }}
+      </p>
+    </div>
+    <div class="col-sm-4 informacao">
+      <label class="titulo">Acompanhado por Eventos</label>
+      <p class="informacao">
+        {{ contrato.inAcompEvento ? 'Sim' : 'Não' }}
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 informacao">
+      <label class="titulo">Data da Assinatura</label>
+      <p class="informacao">
+        {{ contrato.dtAssinatura | date : 'dd/MM/yyyy' }}
+      </p>
+    </div>
+    <div class="col-sm-8 informacao">
+      <label class="titulo">Data Fim de Vigência</label>
+      <p class="informacao">
+        {{ contrato.dtFimVigencia | date : 'dd/MM/yyyy' }}
+      </p>
+    </div>
+  </div>
+
+</siconv-fieldset>

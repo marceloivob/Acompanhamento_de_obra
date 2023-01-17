@@ -1,0 +1,27 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: ${DB_USER_MEDICAO}
+    password: ${DB_PASSWORD_MEDICAO}
+    jdbc:
+      url: ${DB_URL_CONNECTION_MEDICAO}
+      max-size: 2
+  grpc:
+    server: 
+        port: ${MEDICAO_GRPC_PORT}
+  http:
+    port: 8002
+  smallrye-health:
+    root-path: /health
+    liveness-path: /health/live
+    readiness-path: /health/ready
+  smallrye-metrics:
+    path: /metrics
+
+sentry:
+  ~: true
+  dsn: ${SENTRY_DSN_GRPC_MEDICAO}
+  environment: ${SICONV_STAGE}
+  level: ERROR
+  in-app-packages: br.gov
+  

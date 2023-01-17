@@ -1,0 +1,140 @@
+<form [formGroup]="medicaoForm" *ngIf="medicaoForm">
+  <h3 class="subfieldset">Medição</h3>
+  <div>
+  <div class="row">
+    <div class="col-sm-4 informacao">
+      <div *ngIf="dtInicioObraCtrl && dtInicioObraVisivel" >
+        <siconv-date-picker
+          [siconvHasError]="dtInicioObraCtrl"
+          label="Data de Início do Objeto"
+          name="dtInicioObra"
+          (input) = "atualizaDataInicioMedicao($event)"
+          (dateChange) = "atualizaDataInicioMedicao($event)"
+          [required]="true"
+          description="Data no formato dd/mm/aaaa"
+          [siconvMinDate]="dtInicioObra"
+          formControlName="dtInicioObra">
+        </siconv-date-picker>
+        <siconv-local-messages [control]="dtInicioObraCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          <div *ngIf="dtInicioObraCtrl.hasError('dataInicioObraDataAtualValidator')">
+              Campo não deve ser maior que a data atual ( {{medicaoForm.value['dtAtual']  | date : 'dd/MM/yyyy'}} ).
+          </div>
+          <div *ngIf="dtInicioObraCtrl.hasError('germanDate')">
+            Formato de data Inválido.
+          </div>
+        </siconv-local-messages>
+      </div>
+
+      <div *ngIf="!dtInicioObraVisivel" class="informacao" >
+        <label class="titulo">Data de Início do Objeto</label>
+        <p class="informacao">
+          {{medicaoForm.value['dtInicioObra'] | date : 'dd/MM/yyyy' }}
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-4 informacao" *ngIf="medicao && medicao.id">
+      <label class="titulo">Situação</label>
+      <p *ngIf="medicao && medicao.situacao" class="informacao">
+      {{ medicao.situacao.descricao }}
+      </p>
+    </div>
+    <div class="col-sm-4 informacao">
+      <label class="titulo"></label>
+      <p *ngIf = 'isDetail() && isMedicaoAcumulada()' class="informacao">
+        <a title="Acumulada na Medição {{medicao.sequencialMedicaoAgrupadora}}" (click) = "exibirMedicaoAcumuladora(medicao.idMedicaoAgrupadora)"
+          style="min-width: 20px; display: inline-block; padding-left: 10px; color:#345fbf; text-decoration: underline; cursor: pointer;">
+        <i class="fas fa-search md-icone" aria-hidden="true" style="width: 25px; height: 25px;"></i>Acumulada na Medição {{medicao.sequencialMedicaoAgrupadora}}</a>
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 informacao">
+      <label class="titulo">Data de Início da Medição</label>
+      <p class="informacao">
+        {{medicaoForm.value['dtInicioMedicao'] | date : 'dd/MM/yyyy' }}
+      </p>
+    </div>
+    <div *ngIf="dtFimCtrl && exibeEdicaoDataFimMedicao" class="col-sm-4">
+      <label class="control-label">Data Fim da Medição</label>
+      <siconv-date-picker
+          [siconvHasError]="dtFimCtrl"
+          name="dtFimMedicao"
+          description="Data no formato dd/mm/aaaa"
+          formControlName="dtFimMedicao">
+        </siconv-date-picker>
+        <siconv-local-messages [control]="dtFimCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          <div *ngIf="dtFimCtrl.hasError('dataFinalMedicaoPosteriorDataInicioMedicaoValidator')">
+            Campo deve ser maior ou igual a Data de Início da Medição {{medicaoForm.value['dtInicioMedicao']  | date : 'dd/MM/yyyy'}}.
+          </div>
+          <div *ngIf="dtFimCtrl.hasError('germanDate')">
+            Formato de data Inválido.
+          </div>
+        </siconv-local-messages>
+    </div>
+    <div class="col-sm-4 informacao">
+        <div *ngIf="!exibeEdicaoDataFimMedicao" >
+            <label class="titulo">Data Fim da Medição</label>
+            <p class="informacao">
+              {{medicaoForm.value['dtFimMedicao'] | date : 'dd/MM/yyyy' }}
+            </p>
+        </div>
+    </div>
+    <div *ngIf="exibeEdicaoDadosVistoriaExtra" class="col-sm-4 informacao">
+      <label class="control-label">Data Vistoria</label>
+      <siconv-date-picker
+          [siconvHasError]="dtVistoriaCtrl"
+          name="dtVistoria"
+          description="Data no formato dd/mm/aaaa"
+          formControlName="dtVistoria">
+        </siconv-date-picker>
+        <siconv-local-messages [control]="dtVistoriaCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          <div *ngIf="dtVistoriaCtrl.hasError('dataVistoriaAnteriorDataInicioObraValidator')">
+            Campo deve ser maior ou igual a Data de Início do Objeto {{medicaoForm.value['dtInicioObra']  | date : 'dd/MM/yyyy'}}.
+          </div>
+          <div *ngIf="dtVistoriaCtrl.hasError('germanDate')">
+            Formato de data Inválido.
+          </div>
+        </siconv-local-messages>
+    </div>
+    <div class="col-sm-4 informacao">
+      <div *ngIf="!exibeEdicaoDadosVistoriaExtra && ((medicao.situacao && medicao.situacao.codigo === 'ACT') || isConcedenteMandataria()) && medicao.idMedicaoAgrupadora === null" >
+          <label class="titulo">Data Vistoria</label>
+          <p class="informacao">
+            {{medicaoForm.value['dtVistoria'] | date : 'dd/MM/yyyy' }}
+          </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 informacao" *ngIf="!exibeEdicaoDadosVistoriaExtra && ((medicao.situacao && medicao.situacao.codigo === 'ACT') || isConcedenteMandataria()) && medicao.idMedicaoAgrupadora === null" >
+      <input class="form-check-input-custom" type="checkbox" name="vistoriaExtra" formControlName="inVistoria" id="idVistoriaExtra" value={{inVistoriaExtraCtrl.value}}>
+      <label class="form-check-label informacao" style="padding-left: 18px; color: #666666;" for="idVistoriaExtra">Vistoria Extra</label>
+    </div>
+    <div class="col-sm-4 informacao" *ngIf="exibeEdicaoDadosVistoriaExtra" >
+      <input class="form-check-input-custom" type="checkbox" name="vistoriaExtra" formControlName="inVistoria" id="idVistoriaExtra"
+        value={{inVistoriaExtraCtrl.value}} (change)="onChangedVistoriaExtra()">
+      <label class="form-check-label informacao" style="padding-left: 18px; color: #666666;" for="idVistoriaExtra">
+        Vistoria Extra
+      </label>
+    </div>
+    <div class="col-sm-4 informacao" *ngIf="exibeEdicaoDadosVistoriaExtra && exibirSolicitante()">
+      <siconv-select
+            label="Solicitante"
+            [siconvHasError]="solicitanteVistoriaExtraCtrl"
+            [required]="exibirSolicitante()"
+            formControlName="solicitante"
+            [labels]="listaSolicitante | solicitanteVistoriaExtra"
+            [values]="listaSolicitante">
+      </siconv-select>
+      <siconv-local-messages [control]="solicitanteVistoriaExtraCtrl" requiredMessage="Campo de preenchimento obrigatório."></siconv-local-messages>
+    </div>
+    <div class="col-sm-4 informacao"  *ngIf="!exibeEdicaoDadosVistoriaExtra && inVistoriaExtraCtrl.value && ((medicao.situacao && medicao.situacao.codigo === 'ACT') || isConcedenteMandataria()) && medicao.idMedicaoAgrupadora === null">
+      <label class="titulo">Solicitante</label>
+      <p class="informacao">
+          {{medicao.solicitanteVistoriaExtra != null ? medicao.solicitanteVistoriaExtra.descricao : ''}}
+      </p>
+    </div>
+    <div class="col-sm-4 informacao"></div>
+  </div>
+</div>
+</form>

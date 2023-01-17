@@ -1,0 +1,3653 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Conjunto de métricas do módulo Siconv-Medição",
+  "editable": true,
+  "gnetId": 13489,
+  "graphTooltip": 0,
+  "id": 8,
+  "iteration": 1636744901064,
+  "links": [],
+  "panels": [
+    {
+      "collapse": false,
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 139,
+      "panels": [],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Quick Facts",
+      "titleSize": "h1",
+      "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "Displays the uptime of the Java virtual machine",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "OFF",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 300
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 217,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_jvm_uptime_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "metric": "",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "title": "Uptime",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "Usage for the JVM process. 100% means that all CPUs were actively running threads from the JVM",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 1
+      },
+      "id": 213,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_cpu_processCpuLoad_percent{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": " ",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "CPU",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "Used / max heap memory",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 70
+              },
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 6,
+        "y": 1
+      },
+      "id": 215,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_memory_usedHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}*100/base_memory_maxHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": " ",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Mem",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "HTTP stats in selected time range for all instances in a cluster.\n\nPlease mind that response time displayed here is measured inside JVM, it is not full end to end latency your users see, which can be few times bigger.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg response time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 9,
+        "y": 1
+      },
+      "id": 219,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "round(sum(increase(base_REST_request_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[$__range])))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Total requests",
+          "refId": "A",
+          "step": 14400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(increase(base_REST_request_elapsedTime_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[$__range])) / sum(increase(base_REST_request_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[$__range]))",
+          "interval": "",
+          "legendFormat": "Avg response time",
+          "refId": "C"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Throughput (HTTP)",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 1000
+              },
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 2000
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Leaks"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Acquire count"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 7,
+        "x": 14,
+        "y": 1
+      },
+      "id": 221,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_active_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 3,
+          "legendFormat": "Active",
+          "refId": "A",
+          "step": 14400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_available_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Idle",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_max_used_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Max",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_leak_detection_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Leaks",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(round(increase(vendor_agroal_acquire_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[$__range])))",
+          "interval": "",
+          "legendFormat": "Acquire",
+          "refId": "E"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Database Connections",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 251,
+      "panels": [],
+      "title": "Throughput (HTTP)",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "HTTP avg requests/minute",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "hiddenSeries": false,
+      "id": 253,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "round(sum(increase(base_REST_request_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m])) by (class, method))",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{method}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Requests per minute",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "([a-zA-Z]+)_(.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2396",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 2,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2397",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "HTTP average response times over last [1m].\n\nPlease mind that response time displayed here is measured inside JVM, it is not full end to end latency your users see, which can be few times bigger.",
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      },
+      "hiddenSeries": false,
+      "id": 255,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "avg(increase(base_REST_request_elapsedTime_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]) / increase(base_REST_request_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]) > 0) by (method, endpoint) ",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{method}}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Avg server response times",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "([a-zA-Z]+)_(.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2845",
+          "format": "s",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2846",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 0,
+        "y": 13
+      },
+      "id": 268,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "valueSize": 25
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "base_REST_request_maxTimeDuration_seconds{method=~\"$slow_methods\",ambiente=\"$ambiente\",node=\"$node\"} > 0",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{method}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top 5 slow methods",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "([a-zA-Z]+)_(.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 18,
+        "x": 6,
+        "y": 13
+      },
+      "id": 271,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "percent",
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {}
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sort_desc(sum(base_REST_request_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}) by(class))",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{class}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total requests by class",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 225,
+      "panels": [],
+      "title": "Hardware Consumption",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Displays  the \"recent cpu usage\" for the Java Virtual Machine process. This value is a double in the [0.0,1.0] interval. A value of 0.0 means that none of the CPUs were running threads from the JVM process during the recent period of time observed, while a value of 1.0 means that all CPUs were actively running threads from the JVM 100% of the time during the recent period being observed. Threads from the JVM include the application threads as well as the JVM internal threads. All values betweens 0.0 and 1.0 are possible depending of the activities going on in the JVM process and the whole system. If the Java Virtual Machine recent CPU usage is not available, the method returns a negative value.",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 23
+      },
+      "hiddenSeries": false,
+      "id": 243,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_cpu_processCpuLoad_percent{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Usage for the JVM process. 100% means that all CPUs were actively running threads from the JVM",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(avg_over_time(base_cpu_processCpuLoad_percent{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1h]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Usage for the JVM process - last hour average",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_cpu_systemCpuLoad_percent{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Usage for the whole system. 100% means that all CPUs were actively running 100% of the time",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU Usage",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "short",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "decimals": 1,
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "The system load average is the sum of the number of runnable entities queued to the available processors and the number of runnable entities running on the available processors averaged over a period of time. The way in which the load average is calculated is operating system specific but is typically a damped time-dependent average. If the load average is not available, a negative value is displayed. This attribute is designed to provide a hint about the system load and may be queried frequently. The load average may be unavailable on some platforms where it is expensive to implement this method.",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 6,
+        "y": 23
+      },
+      "hiddenSeries": false,
+      "id": 245,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_cpu_systemLoadAverage{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "System load average for the last minute",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(base_cpu_availableProcessors{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Number of processors available to the JVM",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "System Load",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "short",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "$$hashKey": "object:4125",
+          "decimals": 1,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4126",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 23
+      },
+      "hiddenSeries": false,
+      "id": 247,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_thread_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}-base_thread_daemon_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Live threads",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(base_thread_daemon_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Live daemon threads",
+          "metric": "",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(base_thread_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Live threads total",
+          "refId": "D",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(base_thread_max_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Peak live threads total",
+          "refId": "C",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Threads",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "short",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 23
+      },
+      "hiddenSeries": false,
+      "id": 249,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_memory_maxHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Max heap",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(container_memory_working_set_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Container working set",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_memory_freeSwapSize_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Free swap space",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(kube_pod_container_resource_limits_memory_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Container limit",
+          "refId": "E"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Container Memory",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "mbytes",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "description": "Displays the CPU time used by the process on which the Java virtual machine is running in nanoseconds.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 0,
+        "y": 30
+      },
+      "id": 211,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "vendor_cpu_processCpuTime_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Process CPU Time",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 227,
+      "panels": [],
+      "title": "JVM Memory",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Java objects reside in an area called the heap. The heap is created when the JVM starts up and may increase or decrease in size while the application runs. When the heap becomes full, garbage is collected. During the garbage collection objects that are no longer used are cleared, thus making space for new objects.",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 33
+      },
+      "hiddenSeries": false,
+      "id": 229,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_memory_usedHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Used heap memory",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(base_memory_committedHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Memory committed (guaranteed) for the JVM to use",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(base_memory_maxHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Maximum amount (not guaranteed) of heap memory that can be used for memory management",
+          "refId": "C",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Heap",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "mbytes",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Memory Pools are created by JVM memory managers to create a pool of immutable objects. Memory Pool can belong to Heap or Perm Gen, depending on JVM memory manager implementation.",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 33
+      },
+      "hiddenSeries": false,
+      "id": 231,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": "jvm_memory_pool_heap",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum by (name) (vendor_memoryPool_usage_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Usage {{name}}",
+          "metric": "",
+          "refId": "A",
+          "step": 1800
+        },
+        {
+          "exemplar": true,
+          "expr": "sum by (name) (vendor_memoryPool_usage_max_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Max {{name}}",
+          "metric": "",
+          "refId": "C",
+          "step": 1800
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Heap Memory Pools",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "mbytes",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "The JVM has memory other than the heap, referred to as Non-Heap Memory. It is created at the JVM startup and stores per-class structures such as runtime constant pool, field and method data, and the code for methods and constructors, as well as interned Strings. The default maximum size of non-heap memory is 64 MB.",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 33
+      },
+      "hiddenSeries": false,
+      "id": 233,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_memory_usedNonHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Used non-heap memory",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_memory_committedNonHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Non heap memory committed (guaranteed) for the JVM to use",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_memory_maxNonHeap_bytes{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Maximum amount of used non-heap memory",
+          "refId": "C",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Non-Heap",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "mbytes",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Class loaders are responsible for loading Java classes during runtime dynamically to the JVM (Java Virtual Machine). Also, they are part of the JRE (Java Runtime Environment). Hence, the JVM doesn't need to know about the underlying files or file systems in order to run Java programs thanks to class loaders.",
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 33
+      },
+      "hiddenSeries": false,
+      "id": 235,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(base_classloader_loadedClasses_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Classes currently loaded in the JVM",
+          "metric": "",
+          "refId": "A",
+          "step": 1200
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(delta(base_classloader_loadedClasses_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "interval": "",
+          "legendFormat": "Classes currently loaded in the JVM - delta 1m",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Class Loader",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "short",
+        "short"
+      ],
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 237,
+      "panels": [],
+      "title": "Garbage Collector",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "cacheTimeout": null,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "description": "Displays the total number of collections that have occurred. This attribute lists -1 if the collection count is undefined for this collector.",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 0,
+        "y": 41
+      },
+      "hiddenSeries": false,
+      "id": 205,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": false,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "base_gc_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "{{ name }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "GC Copy & Mark Sweep Total",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:8379",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:8380",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "cacheTimeout": null,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "description": "Displays the approximate accumulated collection elapsed time in milliseconds. This attribute displays -1 if the collection elapsed time is undefined for this collector. The JVM implementation may use a high resolution timer to measure the elapsed time. This attribute may display the same value even if the collection count has been incremented if the collection elapsed time is very short.",
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 9,
+        "y": 41
+      },
+      "hiddenSeries": false,
+      "id": 207,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "base_gc_time_total_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}",
+          "interval": "",
+          "legendFormat": "{{ name }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "GC Copy & Mark Sweep Time",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:8464",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:8465",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 2,
+      "description": "Displays the total number of classes that have been loaded since the Java virtual machine has started execution.",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 41
+      },
+      "hiddenSeries": false,
+      "id": 141,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "maxPerRow": 4,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "span": 6,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "base_classloader_loadedClasses_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Classes Count",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total Loaded Class Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:103",
+          "decimals": 2,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:104",
+          "decimals": 2,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "JVM garbage collectors summary:\nhttps://www.baeldung.com/jvm-garbage-collectors",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 0,
+        "y": 48
+      },
+      "hiddenSeries": false,
+      "id": 239,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum by (name) (increase(base_gc_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Number of collections that have occurred last minute ({{name}})",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Collections over last [1m]",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 9,
+        "y": 48
+      },
+      "hiddenSeries": false,
+      "id": 241,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum by (name) (increase(base_gc_time_total_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Approximate accumulated collection elapsed time ({{name}})",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Durations over last [1m]",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 2,
+      "description": "Displays the total number of classes unloaded since the Java virtual machine has started execution.",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 48
+      },
+      "hiddenSeries": false,
+      "id": 142,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "maxPerRow": 4,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "span": 6,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "base_classloader_unloadedClasses_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Classes Count",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total Unloaded Class Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:179",
+          "decimals": 2,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:180",
+          "decimals": 2,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 261,
+      "panels": [],
+      "title": "Datasource",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 56
+      },
+      "hiddenSeries": false,
+      "id": 257,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(rate(vendor_agroal_acquire_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "Acquire operation per second",
+          "refId": "H"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_active_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Active connections",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_available_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "interval": "",
+          "legendFormat": "Idle connections, available to be acquired",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(increase(vendor_agroal_creation_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "interval": "",
+          "legendFormat": "Created connections in the last minute",
+          "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(increase(vendor_agroal_destroy_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "interval": "",
+          "legendFormat": "Destroyed connections last minute",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_invalid_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "Connections removed from the pool for being invalid",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(vendor_agroal_max_used_count{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "Maximum number of connections active simultaneously",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(increase(vendor_agroal_leak_detection_count_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Leak detections",
+          "refId": "E"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Connection pool over last [1m]",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:516",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:517",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 56
+      },
+      "hiddenSeries": false,
+      "id": 259,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(rate(vendor_agroal_blocking_time_total_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Time to acquire a connection",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(rate(vendor_agroal_creation_time_total_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Time to create a connection",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "avg(increase(application_db_query_elapsedTime_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m]) / increase(application_db_query_total{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[1m])) by (group, operation)",
+          "interval": "",
+          "legendFormat": "Sql: {{group}} {{operation}}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Timing over last [1m]",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:570",
+          "format": "s",
+          "label": null,
+          "logBase": 2,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:571",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "id": 263,
+      "panels": [],
+      "title": "Integrations Overhead",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 65
+      },
+      "hiddenSeries": false,
+      "id": 265,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarContratoPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "interval": "",
+          "legendFormat": "consultarContratoPorId",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarQtdeContratosAptosPorEmpresa_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarQtdeContratosAptosPorEmpresa",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_listarContratosAptosPorEmpresa_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "listarContratosAptosPorEmpresa",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_listarSubmetasPorContratoId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "listarSubmetasPorContratoId",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarTipoInstrumentoConvenente_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarTipoInstrumentoConvenente",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultaUsuarioMaisBrasil_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultaUsuarioMaisBrasil",
+          "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_listarEmpresasVinculadasMaisBrasilPorCpf_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "listarEmpresasVinculadasMaisBrasilPorCpf",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultarEmpresaPorCnpj_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarEmpresaPorCnpj",
+          "refId": "H"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultarEmpresaPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarEmpresaPorId",
+          "refId": "I"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_projetobasico_ProjetoBasicoGRPCConsumer_consultarDocumentosComplementaresProjetoBasico_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarDocumentosComplementaresProjetoBasico",
+          "refId": "J"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_consultarUsuarioMembroAtivoConvenio_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarUsuarioMembroAtivoConvenio",
+          "refId": "K"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_consultarUsuarioPorCpf_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarUsuarioPorCpf",
+          "refId": "L"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_getIdConvenio_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "getIdConvenio",
+          "refId": "M"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_isVRPLResponsavelAceiteProcessoExecucao_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "isVRPLResponsavelAceiteProcessoExecucao",
+          "refId": "N"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarListaSubmetasProjetoBasico_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarListaSubmetasProjetoBasico",
+          "refId": "O"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_getListaSubmetasPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "getListaSubmetasPorId",
+          "refId": "P"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_getSubmetaPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "getSubmetaPorId",
+          "refId": "Q"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarSubmetasPropostaVRPLAceita_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarSubmetasPropostaVRPLAceita",
+          "refId": "R"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "GRPC invocations per minute",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2787",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2788",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 65
+      },
+      "hiddenSeries": false,
+      "id": 266,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.8",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarContratoPorId_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarContratoPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "interval": "",
+          "legendFormat": "consultarContratoPorId",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarQtdeContratosAptosPorEmpresa_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarQtdeContratosAptosPorEmpresa_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarQtdeContratosAptosPorEmpresa",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_listarContratosAptosPorEmpresa_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_listarContratosAptosPorEmpresa_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "listarContratosAptosPorEmpresa",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_listarSubmetasPorContratoId_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_listarSubmetasPorContratoId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "listarSubmetasPorContratoId",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarTipoInstrumentoConvenente_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_contratos_ContratosGrpcConsumer_consultarTipoInstrumentoConvenente_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarTipoInstrumentoConvenente",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultaUsuarioMaisBrasil_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultaUsuarioMaisBrasil_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultaUsuarioMaisBrasil",
+          "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_listarEmpresasVinculadasMaisBrasilPorCpf_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_listarEmpresasVinculadasMaisBrasilPorCpf_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "listarEmpresasVinculadasMaisBrasilPorCpf",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultarEmpresaPorCnpj_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultarEmpresaPorCnpj_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarEmpresaPorCnpj",
+          "refId": "H"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultarEmpresaPorId_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_maisbrasil_MaisBrasilGRPCConsumer_consultarEmpresaPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarEmpresaPorId",
+          "refId": "I"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_projetobasico_ProjetoBasicoGRPCConsumer_consultarDocumentosComplementaresProjetoBasico_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_projetobasico_ProjetoBasicoGRPCConsumer_consultarDocumentosComplementaresProjetoBasico_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarDocumentosComplementaresProjetoBasico",
+          "refId": "J"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_consultarUsuarioMembroAtivoConvenio_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_consultarUsuarioMembroAtivoConvenio_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarUsuarioMembroAtivoConvenio",
+          "refId": "K"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_consultarUsuarioPorCpf_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_consultarUsuarioPorCpf_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarUsuarioPorCpf",
+          "refId": "L"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_getIdConvenio_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_getIdConvenio_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "getIdConvenio",
+          "refId": "M"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_isVRPLResponsavelAceiteProcessoExecucao_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_siconv_SiconvGRPCConsumer_isVRPLResponsavelAceiteProcessoExecucao_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "isVRPLResponsavelAceiteProcessoExecucao",
+          "refId": "N"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarListaSubmetasProjetoBasico_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarListaSubmetasProjetoBasico_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarListaSubmetasProjetoBasico",
+          "refId": "O"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_getListaSubmetasPorId_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_getListaSubmetasPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "getListaSubmetasPorId",
+          "refId": "P"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_getSubmetaPorId_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_getSubmetaPorId_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "getSubmetaPorId",
+          "refId": "Q"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarSubmetasPropostaVRPLAceita_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarSubmetasPropostaVRPLAceita_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarSubmetasPropostaVRPLAceita",
+          "refId": "R"
+        },
+        {
+          "exemplar": true,
+          "expr": "rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarListaSubmetasProjetoBasico_elapsedTime_seconds{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m]) / rate(application_br_gov_planejamento_siconv_med_integration_vrpl_VrplGRPCConsumer_consultarListaSubmetasProjetoBasico_total{ambiente=~\"$ambiente\", modulo=~\"$modulo\", node=~\"$node\"}[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "consultarListaSubmetasProjetoBasico",
+          "refId": "S"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Avg GRPC invocations time",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2787",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2788",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [
+    "java",
+    "microprofile",
+    "quarkus"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "d",
+          "value": "d"
+        },
+        "datasource": null,
+        "definition": "label_values(ambiente)",
+        "description": "m",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "ambiente",
+        "options": [],
+        "query": {
+          "query": "label_values(ambiente)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "label": "",
+        "name": "modulo",
+        "query": "siconv-medicao-backend",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "datasource": null,
+        "definition": "label_values(base_thread_count{ambiente=\"$ambiente\",modulo=\"$modulo\"}, node)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "node",
+        "options": [],
+        "query": {
+          "query": "label_values(base_thread_count{ambiente=\"$ambiente\",modulo=\"$modulo\"}, node)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": null,
+        "definition": "query_result(topk(5, max_over_time(base_REST_request_maxTimeDuration_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[$__range])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "slow_methods",
+        "options": [],
+        "query": {
+          "query": "query_result(topk(5, max_over_time(base_REST_request_maxTimeDuration_seconds{ambiente=~\"$ambiente\",modulo=~\"$modulo\",node=~\"$node\"}[$__range])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*method=\"(.*?)\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Módulo Medição (Quarkus)",
+  "uid": "VRxT0ojZz",
+  "version": 13
+}

@@ -1,0 +1,77 @@
+<div *ngIf="medicao && submeta">
+  <app-detalhe-dados-medicao [medicao]="medicao"></app-detalhe-dados-medicao>
+  <app-form-dados-submeta *ngIf="isContratoAcompanhadoPorEvento()" [submeta]="submeta" [medicao]="medicao"></app-form-dados-submeta>
+  <app-form-dados-submeta-servico *ngIf="!isContratoAcompanhadoPorEvento()" [submeta]="submeta" [medicao]="medicao"></app-form-dados-submeta-servico>
+
+  <footer class="footer-botoes">
+    <button type="button" class="btn {{ this.isDetail() ? 'btn-primary' : 'btn-secondary' }}" style="margin-left: 20px; margin-right: 5px;" (click)="voltarComValidacoes(modalConfirmacaoVoltar)">Voltar</button>
+    <button *ngIf="exibirBotaoExcluir()" type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="excluirRascunhoComValidacoes(modalConfirmacaoExcluir)">Excluir Rascunho</button>
+    <button *ngIf="exibirBotaoSalvar()" type="button" class="btn {{assinavel ? 'btn-secondary' : 'btn-primary'}}" style="margin-right: 5px;" (click)="salvarRascunhoComValidacoes(modalConfirmacaoSalvar)">Salvar Rascunho</button>
+    <button *ngIf="exibirBotaoAssinar()" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="assinarComValidacoes(modalConfirmacaoAssinar)">Assinar</button>
+  </footer>
+
+</div>
+
+<ng-template #modalConfirmacaoVoltar>
+  <div class="close">
+    <a class="fa fa-times" (click)="modalConfirmacaoVoltarRef.hide()"></a>
+  </div>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Alterações não salvas</h4>
+  </div>
+  <div class="modal-body">
+    <p>As alterações não salvas serão <strong>desconsideradas</strong>. Deseja prosseguir?</p>
+    <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoVoltarRef.hide()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="modalConfirmacaoVoltarRef.hide(); voltar()">Sim</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalConfirmacaoSalvar>
+  <div class="close">
+    <a class="fa fa-times" (click)="modalConfirmacaoSalvarRef.hide()"></a>
+  </div>
+  <div class="modal-header">
+    <h4>Salvar Rascunho</h4>
+  </div>
+  <div class="modal-body">
+    <p>{{ msgConfirmacaoSalvar }}</p>
+    <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoSalvarRef.hide()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="modalConfirmacaoSalvarRef.hide(); salvarRascunho()">Sim</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalConfirmacaoAssinar>
+  <div class="close">
+    <a class="fa fa-times" (click)="modalConfirmacaoAssinarRef.hide()"></a>
+  </div>
+  <div class="modal-header">
+    <h4>Assinar</h4>
+  </div>
+  <div class="modal-body">
+    <p>{{ msgConfirmacaoAssinar }}</p>
+    <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoAssinarRef.hide()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="modalConfirmacaoAssinarRef.hide(); assinar()">Sim</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalConfirmacaoExcluir>
+  <div class="close">
+    <a class="fa fa-times" (click)="modalConfirmacaoExcluirRef.hide()"></a>
+  </div>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Exclusão do Rascunho da Submeta</h4>
+  </div>
+  <div class="modal-body">
+    <p>Deseja confirmar a <strong>exclusão</strong> do rascunho desta submeta?</p>
+    <div class="modal-buttons">
+      <button type="button" class="btn btn-secondary" style="margin-right: 5px;" (click)="modalConfirmacaoExcluirRef.hide()">Não</button>
+      <button type="button" class="btn btn-primary" (click)="modalConfirmacaoExcluirRef.hide(); excluirRascunho()">Sim</button>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,76 @@
+<siconv-tab-set class="tab-customizada">
+  <form [formGroup]="cadastrarObservacao" >
+
+    <siconv-fieldset [fieldsetTitle]="tituloObservacao" [collapsible]="true" >
+        <div class="form-group">
+            <siconv-textarea
+              label="Descrição"
+              required="true"
+              rows=5
+              maxlength=1000
+              formControlName="txObservacao">
+            </siconv-textarea>
+            <siconv-local-messages [control]="descricaoCtrl"
+            requiredMessage="Campo de preenchimento obrigatório."
+            maxlengthMessage="Texto excedeu a quantidade de caracteres deste campo.">
+          </siconv-local-messages>
+        </div>
+    </siconv-fieldset>
+
+    <siconv-fieldset [fieldsetTitle]="tituloAnexo" [collapsible]="true" >
+
+        <siconv-file
+          label="Arquivo"
+          description="Arquivo a Anexar"
+          (change)="fileUpload($event)"
+          formControlName="file">
+        </siconv-file>
+        <siconv-local-messages [control]="fileCtrl" requiredMessage="Campo de preenchimento obrigatório.">
+          <div *ngIf="fileCtrl.hasError('tamanhoArquivoValidator')">
+            Tamanho de arquivo inválido. O valor máximo permitido é 10 MB.
+          </div>
+          <div *ngIf="fileCtrl.hasError('tipoArquivoValidator')">
+            Extensão de arquivo inválida. Os formatos permitidos são: PDF, XLS, JPG, JPEG, PNG, ODT, ODS, XLSX, DWG, DOC ou DOCX.
+          </div>
+          <div *ngIf="fileCtrl.hasError('tamanhoNomeArquivoValidator')">
+            Tamanho do nome do arquivo anexado não pode exceder o limite de 100 caracteres.
+          </div>
+        </siconv-local-messages>
+
+        <button class="btn btn-primary" style="float: right;" (click)="anexarArquivo()" >
+                    <em class="fa fa-plus"></em> Anexar
+        </button>
+
+        <siconv-table style = "width: 100%"
+                            [data]="data"
+                            [fileExportName]="fileExportName"
+                            [pagination]="true"
+                            [export]="exportFile"
+                            (listaPaginada)="getListaPaginada($event)">
+                    <thead header>
+                      <tr>
+                        <th scope="col" style="text-align:left;">Nome do Arquivo</th>
+                        <th scope="col" style="text-align:right;">Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of lista">
+                        <td>{{item.nmArquivo}}</td>
+                        <td style="text-align:right">
+                          <a *ngIf="item.url" [href]="item.url"><em class="fa fa-download" title="Download" style="font-size:18px;color:#3E67B1;"></em></a>
+                          &nbsp;
+                          <input type="image" title="Excluir" alt="Excluir" class="input-image-left" id="lixeira" src="assets/img/trash.jpg" width="15" height="15" (click)="excluirAnexo(item)">
+                        </td>
+                      </tr>
+                    </tbody>
+          </siconv-table>
+    </siconv-fieldset>
+  </form>
+</siconv-tab-set>
+
+<footer class="footer-botoes">
+  <button type="button" class="btn btn-secondary" style="margin-left: 20px; margin-right: 5px;" (click)="cancelar()">Cancelar</button>
+  <button *ngIf="canAccess('editar') || canAccess('incluir')" type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="salvarObservacao()">Salvar</button>
+</footer>
+
+
